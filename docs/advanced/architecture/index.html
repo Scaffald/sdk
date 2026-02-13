@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-advanced/architecture" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Scaffald API Architecture | Scaffald SDK</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://docs.scaffald.com/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://docs.scaffald.com/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://docs.scaffald.com/docs/advanced/architecture"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Scaffald API Architecture | Scaffald SDK"><meta data-rh="true" name="description" content="Overview"><meta data-rh="true" property="og:description" content="Overview"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.scaffald.com/docs/advanced/architecture"><link data-rh="true" rel="alternate" href="https://docs.scaffald.com/docs/advanced/architecture" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.scaffald.com/docs/advanced/architecture" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Scaffald API Architecture","item":"https://docs.scaffald.com/docs/advanced/architecture"}]}</script><link rel="stylesheet" href="/assets/css/styles.72eb1f99.css">
+<script src="/assets/js/runtime~main.e0a8899f.js" defer="defer"></script>
+<script src="/assets/js/main.f88d011e.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"><div class="navbar__logo"><img src="/img/logo.svg" alt="Scaffald SDK Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/img/logo.svg" alt="Scaffald SDK Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Scaffald SDK</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/docs/intro">Documentation</a><a class="navbar__item navbar__link" href="/docs/api/overview">API Reference</a><a class="navbar__item navbar__link" href="/docs/examples">Examples</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://www.npmjs.com/package/@scaffald/sdk" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">npm<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><a href="https://github.com/Scaffald/sdk" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/guide/installation"><span title="Getting Started" class="categoryLinkLabel_W154">Getting Started</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/guide/react-integration"><span title="Guides" class="categoryLinkLabel_W154">Guides</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/docs/examples/node-js"><span title="Examples" class="categoryLinkLabel_W154">Examples</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/docs/advanced/features"><span title="Advanced" class="categoryLinkLabel_W154">Advanced</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/advanced/features"><span title="Advanced SDK Features" class="linkLabel_WmDU">Advanced SDK Features</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/advanced/webhooks"><span title="Webhooks Guide" class="linkLabel_WmDU">Webhooks Guide</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/docs/advanced/architecture"><span title="Scaffald API Architecture" class="linkLabel_WmDU">Scaffald API Architecture</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/advanced/type-generation"><span title="OpenAPI Type Generation" class="linkLabel_WmDU">OpenAPI Type Generation</span></a></li></ul></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/contributing"><span title="Contributing to Scaffald SDK" class="linkLabel_WmDU">Contributing to Scaffald SDK</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Advanced</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Scaffald API Architecture</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Scaffald API Architecture</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="overview">Overview<a href="#overview" class="hash-link" aria-label="Direct link to Overview" title="Direct link to Overview" translate="no">​</a></h2>
+<p>Scaffald uses a <strong>hybrid architecture</strong> combining REST SDK and tRPC to balance public API requirements, developer experience, and architectural flexibility.</p>
+<ul>
+<li class=""><strong>SDK (REST API)</strong>: User-facing data operations, public-ready endpoints</li>
+<li class=""><strong>tRPC</strong>: Complex workflows, file operations, admin tools, provider integrations</li>
+</ul>
+<p>This hybrid approach allows us to:</p>
+<ul>
+<li class="">Expose a clean, versioned REST API to external developers via the SDK</li>
+<li class="">Maintain internal flexibility with tRPC for complex, server-side operations</li>
+<li class="">Optimize each API style for its specific use cases</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="when-to-use-sdk-rest-api">When to Use SDK (REST API)<a href="#when-to-use-sdk-rest-api" class="hash-link" aria-label="Direct link to When to Use SDK (REST API)" title="Direct link to When to Use SDK (REST API)" translate="no">​</a></h2>
+<p>✅ <strong>Use SDK for:</strong></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="user-facing-data-operations">User-Facing Data Operations<a href="#user-facing-data-operations" class="hash-link" aria-label="Direct link to User-Facing Data Operations" title="Direct link to User-Facing Data Operations" translate="no">​</a></h3>
+<ul>
+<li class="">Profile data (skills, experience, education, certifications)</li>
+<li class="">Job listings and applications</li>
+<li class="">Reviews and ratings</li>
+<li class="">Portfolio items and projects</li>
+<li class="">Social features (connections, follows, engagement)</li>
+<li class="">User search and discovery</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="characteristics">Characteristics:<a href="#characteristics" class="hash-link" aria-label="Direct link to Characteristics:" title="Direct link to Characteristics:" translate="no">​</a></h3>
+<ul>
+<li class="">Read-heavy operations</li>
+<li class="">Standard CRUD patterns</li>
+<li class="">Simple filtering and pagination</li>
+<li class="">Public API candidates</li>
+<li class="">Standard HTTP semantics (GET, POST, PATCH, DELETE)</li>
+<li class="">Stateless operations</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="examples">Examples:<a href="#examples" class="hash-link" aria-label="Direct link to Examples:" title="Direct link to Examples:" translate="no">​</a></h3>
+<div class="language-typescript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-typescript codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token comment" style="color:#999988;font-style:italic">// Good SDK candidates</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">await</span><span class="token plain"> client</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">jobs</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">list</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> status</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;published&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> limit</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">20</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">await</span><span class="token plain"> client</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">profiles</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">get</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> userId</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;user_123&#x27;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">await</span><span class="token plain"> client</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">applications</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">submit</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> jobId</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;job_456&#x27;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">await</span><span class="token plain"> client</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">skills</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">getUserSkills</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> userId</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;user_123&#x27;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="when-to-use-trpc">When to Use tRPC<a href="#when-to-use-trpc" class="hash-link" aria-label="Direct link to When to Use tRPC" title="Direct link to When to Use tRPC" translate="no">​</a></h2>
+<p>✅ <strong>Use tRPC for:</strong></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="complex-server-side-workflows">Complex Server-Side Workflows<a href="#complex-server-side-workflows" class="hash-link" aria-label="Direct link to Complex Server-Side Workflows" title="Direct link to Complex Server-Side Workflows" translate="no">​</a></h3>
+<ul>
+<li class="">Multi-step operations with state</li>
+<li class="">Complex business logic with server-side validation</li>
+<li class="">Operations requiring server context</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="file-operations">File Operations<a href="#file-operations" class="hash-link" aria-label="Direct link to File Operations" title="Direct link to File Operations" translate="no">​</a></h3>
+<ul>
+<li class="">File uploads with streaming</li>
+<li class="">Document generation (PDF, CSV exports)</li>
+<li class="">Resume parsing and format conversion</li>
+<li class="">Image processing and optimization</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="external-provider-integration">External Provider Integration<a href="#external-provider-integration" class="hash-link" aria-label="Direct link to External Provider Integration" title="Direct link to External Provider Integration" translate="no">​</a></h3>
+<ul>
+<li class="">Payment processing (Stripe)</li>
+<li class="">Background check services</li>
+<li class="">ID verification APIs</li>
+<li class="">OAuth provider flows</li>
+<li class="">Operations requiring API secrets</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="admin-operations">Admin Operations<a href="#admin-operations" class="hash-link" aria-label="Direct link to Admin Operations" title="Direct link to Admin Operations" translate="no">​</a></h3>
+<ul>
+<li class="">Super-admin only endpoints</li>
+<li class="">Office management tools</li>
+<li class="">Analytics dashboards</li>
+<li class="">System configuration</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="compliance-workflows">Compliance Workflows<a href="#compliance-workflows" class="hash-link" aria-label="Direct link to Compliance Workflows" title="Direct link to Compliance Workflows" translate="no">​</a></h3>
+<ul>
+<li class="">CCPA data requests</li>
+<li class="">Account deletion with audit trails</li>
+<li class="">Legal and compliance-critical operations</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="examples-1">Examples:<a href="#examples-1" class="hash-link" aria-label="Direct link to Examples:" title="Direct link to Examples:" translate="no">​</a></h3>
+<div class="language-typescript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-typescript codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token comment" style="color:#999988;font-style:italic">// Good tRPC candidates</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">api</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">payments</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">createPaymentIntent</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">useMutation</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">api</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">resume</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">upload</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">useMutation</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">api</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">backgroundChecks</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">initiateCheck</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">useMutation</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">api</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">office</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">adminUpdateUser</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">useMutation</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">api</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">ccpa</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">exportUserData</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">useMutation</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="architecture-decision-records">Architecture Decision Records<a href="#architecture-decision-records" class="hash-link" aria-label="Direct link to Architecture Decision Records" title="Direct link to Architecture Decision Records" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adr-001-why-hybrid-architecture">ADR-001: Why Hybrid Architecture?<a href="#adr-001-why-hybrid-architecture" class="hash-link" aria-label="Direct link to ADR-001: Why Hybrid Architecture?" title="Direct link to ADR-001: Why Hybrid Architecture?" translate="no">​</a></h3>
+<p><strong>Context</strong>:</p>
+<ul>
+<li class="">Need for public REST API to enable SDK and external developer access</li>
+<li class="">Internal operations require flexibility and server-side context</li>
+<li class="">Want to maintain fast iteration speed for complex features</li>
+</ul>
+<p><strong>Decision</strong>:
+Use SDK (REST) for user-facing operations and tRPC for internal/complex operations</p>
+<p><strong>Consequences</strong>:</p>
+<ul>
+<li class="">✅ Clean public API surface via SDK</li>
+<li class="">✅ Internal flexibility maintained with tRPC</li>
+<li class="">✅ Each tool optimized for its use case</li>
+<li class="">⚠️ Dual maintenance required (but clear separation)</li>
+<li class="">⚠️ Developers must understand when to use each</li>
+</ul>
+<p><strong>Status</strong>: Accepted</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adr-002-file-operations-stay-in-trpc">ADR-002: File Operations Stay in tRPC<a href="#adr-002-file-operations-stay-in-trpc" class="hash-link" aria-label="Direct link to ADR-002: File Operations Stay in tRPC" title="Direct link to ADR-002: File Operations Stay in tRPC" translate="no">​</a></h3>
+<p><strong>Context</strong>:
+File uploads require:</p>
+<ul>
+<li class="">Streaming support</li>
+<li class="">Signed URLs</li>
+<li class="">Server-side processing</li>
+<li class="">Storage backend abstraction</li>
+</ul>
+<p><strong>Decision</strong>:
+Keep work-logs, documents, resume, CMS file operations in tRPC</p>
+<p><strong>Consequences</strong>:</p>
+<ul>
+<li class="">✅ Simplified file handling with server context</li>
+<li class="">✅ Security through signed URLs</li>
+<li class="">✅ Flexible storage backend (Supabase/S3)</li>
+<li class="">⚠️ Cannot expose directly via public SDK without proxy layer</li>
+<li class="">⚠️ SDK users must use separate file upload flow</li>
+</ul>
+<p><strong>Status</strong>: Accepted</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adr-003-payment--provider-integrations-stay-in-trpc">ADR-003: Payment &amp; Provider Integrations Stay in tRPC<a href="#adr-003-payment--provider-integrations-stay-in-trpc" class="hash-link" aria-label="Direct link to ADR-003: Payment &amp; Provider Integrations Stay in tRPC" title="Direct link to ADR-003: Payment &amp; Provider Integrations Stay in tRPC" translate="no">​</a></h3>
+<p><strong>Context</strong>:
+External provider APIs require:</p>
+<ul>
+<li class="">API keys and secrets (server-side only)</li>
+<li class="">Webhook handling</li>
+<li class="">Complex error handling and retries</li>
+<li class="">State management across async operations</li>
+</ul>
+<p><strong>Decision</strong>:
+Keep payments, background checks, ID verification in tRPC</p>
+<p><strong>Consequences</strong>:</p>
+<ul>
+<li class="">✅ Secrets never exposed to client</li>
+<li class="">✅ Webhook handling on server</li>
+<li class="">✅ Complex retry logic centralized</li>
+<li class="">⚠️ Cannot expose via public SDK</li>
+<li class="">⚠️ Requires tRPC client for these operations</li>
+</ul>
+<p><strong>Status</strong>: Accepted</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adr-004-admin-operations-stay-in-trpc">ADR-004: Admin Operations Stay in tRPC<a href="#adr-004-admin-operations-stay-in-trpc" class="hash-link" aria-label="Direct link to ADR-004: Admin Operations Stay in tRPC" title="Direct link to ADR-004: Admin Operations Stay in tRPC" translate="no">​</a></h3>
+<p><strong>Context</strong>:
+Admin operations:</p>
+<ul>
+<li class="">Require organization-level access control</li>
+<li class="">Often operate across multiple users</li>
+<li class="">Need complex authorization logic</li>
+<li class="">Are not suitable for public API</li>
+</ul>
+<p><strong>Decision</strong>:
+Keep office admin, super-admin tools in tRPC</p>
+<p><strong>Consequences</strong>:</p>
+<ul>
+<li class="">✅ Flexible authorization without API key constraints</li>
+<li class="">✅ Can use nested routers for organization</li>
+<li class="">✅ Server-side session management</li>
+<li class="">⚠️ Admin UI tied to tRPC client</li>
+<li class="">⚠️ Cannot expose to external developers</li>
+</ul>
+<p><strong>Status</strong>: Accepted</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adr-005-social-features-in-sdk">ADR-005: Social Features in SDK<a href="#adr-005-social-features-in-sdk" class="hash-link" aria-label="Direct link to ADR-005: Social Features in SDK" title="Direct link to ADR-005: Social Features in SDK" translate="no">​</a></h3>
+<p><strong>Context</strong>:
+Social features (connections, follows, engagement tracking):</p>
+<ul>
+<li class="">Simple CRUD operations</li>
+<li class="">Read-heavy with caching</li>
+<li class="">Valuable for external integrations</li>
+<li class="">Standard REST patterns work well</li>
+</ul>
+<p><strong>Decision</strong>:
+Migrate all social features to SDK</p>
+<p><strong>Consequences</strong>:</p>
+<ul>
+<li class="">✅ External developers can build social features</li>
+<li class="">✅ Clean REST patterns for follows/connections</li>
+<li class="">✅ Better caching with React Query</li>
+<li class="">✅ Public API for engagement tracking</li>
+<li class="">✅ Mobile apps can use REST directly</li>
+</ul>
+<p><strong>Status</strong>: Accepted</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="api-coverage">API Coverage<a href="#api-coverage" class="hash-link" aria-label="Direct link to API Coverage" title="Direct link to API Coverage" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="sdk-resources-31-resources">SDK Resources (31 Resources)<a href="#sdk-resources-31-resources" class="hash-link" aria-label="Direct link to SDK Resources (31 Resources)" title="Direct link to SDK Resources (31 Resources)" translate="no">​</a></h3>
+<p><strong>Core Data (8)</strong>:</p>
+<ul>
+<li class="">jobs, applications, profiles, user-profiles</li>
+<li class="">industries, organizations, teams, api-keys</li>
+</ul>
+<p><strong>Profile Extensions (8)</strong>:</p>
+<ul>
+<li class="">skills, experience, employment, education</li>
+<li class="">certifications, portfolio, reviews, projects</li>
+</ul>
+<p><strong>Social/Engagement (4)</strong>:</p>
+<ul>
+<li class="">connections, follows, engagement, profile-views</li>
+</ul>
+<p><strong>Supporting (7)</strong>:</p>
+<ul>
+<li class="">prerequisites, profile-completion, profile-import</li>
+<li class="">employers, onet, inquiries, notifications</li>
+</ul>
+<p><strong>Operations (4)</strong>:</p>
+<ul>
+<li class="">work-logs, profile-widgets, webhooks-management, background-checks</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="trpc-routers-staying-18-routers">tRPC Routers Staying (18 Routers)<a href="#trpc-routers-staying-18-routers" class="hash-link" aria-label="Direct link to tRPC Routers Staying (18 Routers)" title="Direct link to tRPC Routers Staying (18 Routers)" translate="no">​</a></h3>
+<p><strong>File Operations (5)</strong>:</p>
+<ul>
+<li class="">work-logs (photos, GPS, exports)</li>
+<li class="">documents (multi-file, integrations)</li>
+<li class="">resume (parsing, conversions)</li>
+<li class="">cms (images, storage)</li>
+<li class="">background-checks (document uploads)</li>
+</ul>
+<p><strong>Provider Integration (4)</strong>:</p>
+<ul>
+<li class="">oauth (secrets)</li>
+<li class="">payments (Stripe)</li>
+<li class="">stripe-settings (admin config)</li>
+<li class="">id-verification (third-party APIs)</li>
+</ul>
+<p><strong>Compliance (3)</strong>:</p>
+<ul>
+<li class="">ccpa (data rights, PDF generation)</li>
+<li class="">account-deletion (cascading, audit)</li>
+<li class="">success-fees (payment gating)</li>
+</ul>
+<p><strong>Admin Tools (4)</strong>:</p>
+<ul>
+<li class="">office (super-admin, nested routers)</li>
+<li class="">auth (session management)</li>
+<li class="">map (specialized geocoding)</li>
+<li class="">notifications (real-time subscriptions)</li>
+</ul>
+<p><strong>Low Usage (2)</strong>:</p>
+<ul>
+<li class="">feedback (2 uses)</li>
+<li class="">news (1 use)</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="migration-history">Migration History<a href="#migration-history" class="hash-link" aria-label="Direct link to Migration History" title="Direct link to Migration History" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phases-1-17-foundation--core-complete">Phases 1-17: Foundation &amp; Core (Complete)<a href="#phases-1-17-foundation--core-complete" class="hash-link" aria-label="Direct link to Phases 1-17: Foundation &amp; Core (Complete)" title="Direct link to Phases 1-17: Foundation &amp; Core (Complete)" translate="no">​</a></h3>
+<p><strong>Result</strong>: 30 SDK resources, ~170 files migrated</p>
+<ul>
+<li class="">✅ Teams, Prerequisites, Applications, Jobs</li>
+<li class="">✅ Engagement, Social features</li>
+<li class="">✅ Profile Extensions</li>
+<li class="">✅ Organizations, Employers, ONET</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-18-trpc-cleanup-complete">Phase 18: tRPC Cleanup (Complete)<a href="#phase-18-trpc-cleanup-complete" class="hash-link" aria-label="Direct link to Phase 18: tRPC Cleanup (Complete)" title="Direct link to Phase 18: tRPC Cleanup (Complete)" translate="no">​</a></h3>
+<p><strong>Result</strong>: Cleaned up all tRPC utility patterns</p>
+<ul>
+<li class="">✅ Replaced <code>api.useUtils()</code> with <code>useQueryClient()</code></li>
+<li class="">✅ Migrated API keys to SDK</li>
+<li class="">✅ Refactored cache invalidation patterns</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-19-sdk-test-coverage-complete">Phase 19: SDK Test Coverage (Complete)<a href="#phase-19-sdk-test-coverage-complete" class="hash-link" aria-label="Direct link to Phase 19: SDK Test Coverage (Complete)" title="Direct link to Phase 19: SDK Test Coverage (Complete)" translate="no">​</a></h3>
+<p><strong>Result</strong>: 93% resource coverage (28/30 resources)</p>
+<ul>
+<li class="">✅ Created 19 new test files</li>
+<li class="">✅ 31 total test files (including infrastructure)</li>
+<li class="">✅ Comprehensive coverage of all priority resources</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-20-strategic-migrations-complete">Phase 20: Strategic Migrations (Complete)<a href="#phase-20-strategic-migrations-complete" class="hash-link" aria-label="Direct link to Phase 20: Strategic Migrations (Complete)" title="Direct link to Phase 20: Strategic Migrations (Complete)" translate="no">​</a></h3>
+<p><strong>Result</strong>: User-profiles migrated</p>
+<ul>
+<li class="">✅ user-profiles: 8 methods, 8 files migrated, 16 queries</li>
+<li class="">⏭️ addresses, workers, personality-assessment: 0 uses (not exposed in router)</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-21-architecture-documentation-complete">Phase 21: Architecture Documentation (Complete)<a href="#phase-21-architecture-documentation-complete" class="hash-link" aria-label="Direct link to Phase 21: Architecture Documentation (Complete)" title="Direct link to Phase 21: Architecture Documentation (Complete)" translate="no">​</a></h3>
+<p><strong>Result</strong>: Comprehensive documentation</p>
+<ul>
+<li class="">✅ This ARCHITECTURE.md document</li>
+<li class="">✅ Migration guidelines</li>
+<li class="">✅ API coverage matrix</li>
+<li class="">✅ Updated README</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="guidelines-for-future-development">Guidelines for Future Development<a href="#guidelines-for-future-development" class="hash-link" aria-label="Direct link to Guidelines for Future Development" title="Direct link to Guidelines for Future Development" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="adding-new-endpoints">Adding New Endpoints<a href="#adding-new-endpoints" class="hash-link" aria-label="Direct link to Adding New Endpoints" title="Direct link to Adding New Endpoints" translate="no">​</a></h3>
+<ol>
+<li class=""><strong>Is it user-facing data?</strong> → Use SDK</li>
+<li class=""><strong>Does it require file uploads?</strong> → Use tRPC</li>
+<li class=""><strong>Does it integrate with external APIs?</strong> → Use tRPC</li>
+<li class=""><strong>Is it admin-only?</strong> → Use tRPC</li>
+<li class=""><strong>Is it compliance-critical?</strong> → Use tRPC</li>
+<li class=""><strong>Otherwise</strong> → Default to SDK</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="sdk-development-workflow">SDK Development Workflow<a href="#sdk-development-workflow" class="hash-link" aria-label="Direct link to SDK Development Workflow" title="Direct link to SDK Development Workflow" translate="no">​</a></h3>
+<ol>
+<li class="">Define types in <code>/packages/scaffald-sdk/src/resources/[name].ts</code></li>
+<li class="">Implement resource class extending <code>Resource</code></li>
+<li class="">Add to SDK client constructor</li>
+<li class="">Export types from SDK index</li>
+<li class="">Create React hooks in <code>/packages/scf-core/utils/[name]-sdk-hooks.ts</code></li>
+<li class="">Write comprehensive tests in <code>/packages/scaffald-sdk/src/__tests__/[name].test.ts</code></li>
+<li class="">Add mock handlers to MSW server</li>
+<li class="">Document in this file</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="trpc-development-workflow">tRPC Development Workflow<a href="#trpc-development-workflow" class="hash-link" aria-label="Direct link to tRPC Development Workflow" title="Direct link to tRPC Development Workflow" translate="no">​</a></h3>
+<ol>
+<li class="">Define router in <code>/packages/supabase/functions/trpc/routers/[name].router.ts</code></li>
+<li class="">Add to main router exports</li>
+<li class="">Create hooks in feature directory</li>
+<li class="">Document why it stays in tRPC (reference ADR)</li>
+<li class="">Add to &quot;Routers Staying in tRPC&quot; list in this file</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="performance-considerations">Performance Considerations<a href="#performance-considerations" class="hash-link" aria-label="Direct link to Performance Considerations" title="Direct link to Performance Considerations" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="sdk-rest">SDK (REST)<a href="#sdk-rest" class="hash-link" aria-label="Direct link to SDK (REST)" title="Direct link to SDK (REST)" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Caching</strong>: React Query manages caching automatically</li>
+<li class=""><strong>Batching</strong>: Not supported (separate HTTP requests)</li>
+<li class=""><strong>Network</strong>: More requests but simpler infrastructure</li>
+<li class=""><strong>Best for</strong>: Independent queries, cacheable data</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="trpc">tRPC<a href="#trpc" class="hash-link" aria-label="Direct link to tRPC" title="Direct link to tRPC" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Caching</strong>: React Query integration</li>
+<li class=""><strong>Batching</strong>: Supported via links</li>
+<li class=""><strong>Network</strong>: Fewer requests with batching</li>
+<li class=""><strong>Best for</strong>: Related queries, real-time subscriptions</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="security-considerations">Security Considerations<a href="#security-considerations" class="hash-link" aria-label="Direct link to Security Considerations" title="Direct link to Security Considerations" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="sdk-rest-1">SDK (REST)<a href="#sdk-rest-1" class="hash-link" aria-label="Direct link to SDK (REST)" title="Direct link to SDK (REST)" translate="no">​</a></h3>
+<ul>
+<li class="">API keys or OAuth tokens required</li>
+<li class="">Rate limiting per key</li>
+<li class="">Public endpoints must be secured</li>
+<li class="">Validate all inputs server-side</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="trpc-1">tRPC<a href="#trpc-1" class="hash-link" aria-label="Direct link to tRPC" title="Direct link to tRPC" translate="no">​</a></h3>
+<ul>
+<li class="">Supabase session-based auth</li>
+<li class="">Server context available</li>
+<li class="">Can access secrets safely</li>
+<li class="">Flexible authorization logic</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="future-considerations">Future Considerations<a href="#future-considerations" class="hash-link" aria-label="Direct link to Future Considerations" title="Direct link to Future Considerations" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="potential-future-changes">Potential Future Changes<a href="#potential-future-changes" class="hash-link" aria-label="Direct link to Potential Future Changes" title="Direct link to Potential Future Changes" translate="no">​</a></h3>
+<ol>
+<li class=""><strong>GraphQL Layer</strong>: Could add GraphQL over SDK resources for flexibility</li>
+<li class=""><strong>SDK Mobile</strong>: Native SDKs (Swift, Kotlin) wrapping REST API</li>
+<li class=""><strong>Webhooks SDK</strong>: SDK resource for webhook management (already exists)</li>
+<li class=""><strong>Real-time</strong>: Consider WebSocket/SSE layer for real-time features</li>
+<li class=""><strong>API Versioning</strong>: Plan for v2 endpoints as needed</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="deprecation-strategy">Deprecation Strategy<a href="#deprecation-strategy" class="hash-link" aria-label="Direct link to Deprecation Strategy" title="Direct link to Deprecation Strategy" translate="no">​</a></h3>
+<p>When deprecating tRPC routers:</p>
+<ol>
+<li class="">Mark as deprecated in code with comments</li>
+<li class="">Add warning logs when used</li>
+<li class="">Provide migration guide to SDK equivalent</li>
+<li class="">Keep for 2-3 releases minimum</li>
+<li class="">Remove only after confirming zero usage</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="conclusion">Conclusion<a href="#conclusion" class="hash-link" aria-label="Direct link to Conclusion" title="Direct link to Conclusion" translate="no">​</a></h2>
+<p>The hybrid SDK/tRPC architecture provides the best of both worlds:</p>
+<ul>
+<li class=""><strong>Public REST API</strong> for external developers and mobile apps</li>
+<li class=""><strong>Internal tRPC</strong> for complex operations and flexibility</li>
+<li class=""><strong>Clear separation</strong> of concerns and use cases</li>
+</ul>
+<p>This architecture is production-ready with 93% SDK test coverage, comprehensive documentation, and clear guidelines for future development.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Scaffald/sdk/tree/main/docs-site/docs/advanced/architecture.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/docs/advanced/webhooks"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Webhooks Guide</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/docs/advanced/type-generation"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">OpenAPI Type Generation</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#overview" class="table-of-contents__link toc-highlight">Overview</a></li><li><a href="#when-to-use-sdk-rest-api" class="table-of-contents__link toc-highlight">When to Use SDK (REST API)</a><ul><li><a href="#user-facing-data-operations" class="table-of-contents__link toc-highlight">User-Facing Data Operations</a></li><li><a href="#characteristics" class="table-of-contents__link toc-highlight">Characteristics:</a></li><li><a href="#examples" class="table-of-contents__link toc-highlight">Examples:</a></li></ul></li><li><a href="#when-to-use-trpc" class="table-of-contents__link toc-highlight">When to Use tRPC</a><ul><li><a href="#complex-server-side-workflows" class="table-of-contents__link toc-highlight">Complex Server-Side Workflows</a></li><li><a href="#file-operations" class="table-of-contents__link toc-highlight">File Operations</a></li><li><a href="#external-provider-integration" class="table-of-contents__link toc-highlight">External Provider Integration</a></li><li><a href="#admin-operations" class="table-of-contents__link toc-highlight">Admin Operations</a></li><li><a href="#compliance-workflows" class="table-of-contents__link toc-highlight">Compliance Workflows</a></li><li><a href="#examples-1" class="table-of-contents__link toc-highlight">Examples:</a></li></ul></li><li><a href="#architecture-decision-records" class="table-of-contents__link toc-highlight">Architecture Decision Records</a><ul><li><a href="#adr-001-why-hybrid-architecture" class="table-of-contents__link toc-highlight">ADR-001: Why Hybrid Architecture?</a></li><li><a href="#adr-002-file-operations-stay-in-trpc" class="table-of-contents__link toc-highlight">ADR-002: File Operations Stay in tRPC</a></li><li><a href="#adr-003-payment--provider-integrations-stay-in-trpc" class="table-of-contents__link toc-highlight">ADR-003: Payment &amp; Provider Integrations Stay in tRPC</a></li><li><a href="#adr-004-admin-operations-stay-in-trpc" class="table-of-contents__link toc-highlight">ADR-004: Admin Operations Stay in tRPC</a></li><li><a href="#adr-005-social-features-in-sdk" class="table-of-contents__link toc-highlight">ADR-005: Social Features in SDK</a></li></ul></li><li><a href="#api-coverage" class="table-of-contents__link toc-highlight">API Coverage</a><ul><li><a href="#sdk-resources-31-resources" class="table-of-contents__link toc-highlight">SDK Resources (31 Resources)</a></li><li><a href="#trpc-routers-staying-18-routers" class="table-of-contents__link toc-highlight">tRPC Routers Staying (18 Routers)</a></li></ul></li><li><a href="#migration-history" class="table-of-contents__link toc-highlight">Migration History</a><ul><li><a href="#phases-1-17-foundation--core-complete" class="table-of-contents__link toc-highlight">Phases 1-17: Foundation &amp; Core (Complete)</a></li><li><a href="#phase-18-trpc-cleanup-complete" class="table-of-contents__link toc-highlight">Phase 18: tRPC Cleanup (Complete)</a></li><li><a href="#phase-19-sdk-test-coverage-complete" class="table-of-contents__link toc-highlight">Phase 19: SDK Test Coverage (Complete)</a></li><li><a href="#phase-20-strategic-migrations-complete" class="table-of-contents__link toc-highlight">Phase 20: Strategic Migrations (Complete)</a></li><li><a href="#phase-21-architecture-documentation-complete" class="table-of-contents__link toc-highlight">Phase 21: Architecture Documentation (Complete)</a></li></ul></li><li><a href="#guidelines-for-future-development" class="table-of-contents__link toc-highlight">Guidelines for Future Development</a><ul><li><a href="#adding-new-endpoints" class="table-of-contents__link toc-highlight">Adding New Endpoints</a></li><li><a href="#sdk-development-workflow" class="table-of-contents__link toc-highlight">SDK Development Workflow</a></li><li><a href="#trpc-development-workflow" class="table-of-contents__link toc-highlight">tRPC Development Workflow</a></li></ul></li><li><a href="#performance-considerations" class="table-of-contents__link toc-highlight">Performance Considerations</a><ul><li><a href="#sdk-rest" class="table-of-contents__link toc-highlight">SDK (REST)</a></li><li><a href="#trpc" class="table-of-contents__link toc-highlight">tRPC</a></li></ul></li><li><a href="#security-considerations" class="table-of-contents__link toc-highlight">Security Considerations</a><ul><li><a href="#sdk-rest-1" class="table-of-contents__link toc-highlight">SDK (REST)</a></li><li><a href="#trpc-1" class="table-of-contents__link toc-highlight">tRPC</a></li></ul></li><li><a href="#future-considerations" class="table-of-contents__link toc-highlight">Future Considerations</a><ul><li><a href="#potential-future-changes" class="table-of-contents__link toc-highlight">Potential Future Changes</a></li><li><a href="#deprecation-strategy" class="table-of-contents__link toc-highlight">Deprecation Strategy</a></li></ul></li><li><a href="#conclusion" class="table-of-contents__link toc-highlight">Conclusion</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Documentation</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/docs/intro">Getting Started</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/api/overview">API Reference</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/examples">Examples</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Scaffald/sdk/discussions" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub Discussions<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/Scaffald/sdk/issues" target="_blank" rel="noopener noreferrer" class="footer__link-item">Issues<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://www.npmjs.com/package/@scaffald/sdk" target="_blank" rel="noopener noreferrer" class="footer__link-item">npm Package<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/Scaffald/sdk" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a class="footer__link-item" href="/docs/contributing">Contributing</a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Scaffald. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
