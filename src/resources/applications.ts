@@ -1,5 +1,29 @@
 import { Resource } from './base.js'
 
+export interface ApplicationJobSummary {
+  id: string
+  title: string | null
+  location: string | null
+  employment_type: string | null
+  remote_option: string | null
+  pay_range_min_cents: number | null
+  pay_range_max_cents: number | null
+  pay_range_type: string | null
+  organization?: {
+    id: string
+    name: string | null
+    logo_url: string | null
+  } | null
+}
+
+export interface ApplicationActivity {
+  id: string
+  application_id: string
+  event_type: string
+  details?: Record<string, unknown> | null
+  created_at: string
+}
+
 export interface Application {
   id: string
   job_id: string
@@ -13,19 +37,13 @@ export interface Application {
     | 'hired'
     | 'rejected'
     | 'withdrawn'
-  current_location?: string
-  willing_to_relocate?: boolean
-  years_experience?: number
-  is_authorized_to_work?: boolean
-  earliest_start_date?: string
   screening_answers?: Record<string, unknown>
-  custom_question_answers?: CustomQuestionAnswer[]
-  attachments?: Record<string, AttachmentMetadata>
+  attachment_metadata?: Record<string, unknown>
   completed_steps?: string[]
-  is_complete: boolean
-  applied_at: string
-  updated_at: string
-  score?: number
+  created_at: string
+  stage_changed_at?: string | null
+  score?: number | null
+  job?: ApplicationJobSummary | null
   /** Source of hire — how the candidate found this job (Issue #91) */
   source?: 'scaffald' | 'referral' | 'external_board' | 'social_media' | 'company_website' | 'other'
   /** Union status for union-aware hiring (Issue #98) */
@@ -220,6 +238,15 @@ export class Applications extends Resource {
    */
   async confirmUpload(params: ConfirmUploadParams): Promise<Application> {
     return this.post<Application>('/v1/applications/confirm-upload', params)
+  }
+
+  /**
+   * Get activity feed for an application
+   * @param applicationId - The application ID
+   * @returns List of activity entries for the application
+   */
+  async getActivity(applicationId: string): Promise<{ data: ApplicationActivity[] }> {
+    return this.get<{ data: ApplicationActivity[] }>(`/v1/applications/${applicationId}/activity`)
   }
 
   /**
