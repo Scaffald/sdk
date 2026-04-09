@@ -100,7 +100,7 @@ export const communityHandlers = [
     return HttpResponse.json({ data: MOCK_POST })
   }),
 
-  http.post(`${BASE_URL}/v1/communities/posts`, async ({ request }) => {
+  http.post(`${BASE_URL}/v1/communities/posts/:communityId`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>
     return HttpResponse.json({
       data: { ...MOCK_POST, ...body, id: 'post_new', status: 'draft', is_published: false },
