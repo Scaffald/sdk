@@ -933,5 +933,25 @@ export type {
   TrackImpressionParams,
 } from './resources/analytics.js'
 
+export type {
+  Task,
+  TaskStatus,
+  TaskPriority,
+  TasksListResponse,
+  ListTasksParams,
+  CreateTaskParams,
+  UpdateTaskParams,
+  CompleteTaskParams,
+} from './resources/tasks.js'
+
+export type {
+  Punchlist,
+  PunchlistStatus,
+  PunchlistsListResponse,
+  ListPunchlistsParams,
+  CreatePunchlistParams,
+  UpdatePunchlistParams,
+} from './resources/punchlists.js'
+
 import { Scaffald } from './client.js'
 export default Scaffald

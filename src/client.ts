@@ -16,6 +16,8 @@ import { Engagement } from './resources/engagement.js'
 import { BackgroundChecks } from './resources/background-checks.js'
 import { Inquiries } from './resources/inquiries.js'
 import { WorkLogs } from './resources/work-logs.js'
+import { Tasks } from './resources/tasks.js'
+import { Punchlists } from './resources/punchlists.js'
 import { Skills } from './resources/skills.js'
 import { Experience } from './resources/experience.js'
 import { Employment } from './resources/employment.js'
@@ -85,6 +87,8 @@ export class Scaffald {
   public readonly backgroundChecks: BackgroundChecks
   public readonly inquiries: Inquiries
   public readonly workLogs: WorkLogs
+  public readonly tasks: Tasks
+  public readonly punchlists: Punchlists
   public readonly skills: Skills
   public readonly experience: Experience
   public readonly employment: Employment
@@ -161,6 +165,8 @@ export class Scaffald {
     this.backgroundChecks = new BackgroundChecks(this.http)
     this.inquiries = new Inquiries(this.http)
     this.workLogs = new WorkLogs(this.http)
+    this.tasks = new Tasks(this.http)
+    this.punchlists = new Punchlists(this.http)
     this.skills = new Skills(this.http)
     this.experience = new Experience(this.http)
     this.employment = new Employment(this.http)
