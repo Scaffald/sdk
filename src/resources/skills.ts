@@ -83,6 +83,8 @@ export interface SearchParentSkillsParams {
   query: string
   industryId?: string
   limit?: number
+  /** Taxonomies to search. Defaults to ['csi'] server-side when omitted. */
+  taxonomies?: Array<'csi' | 'onet'>
 }
 
 export interface ParentSkill {
