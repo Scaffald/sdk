@@ -89,7 +89,7 @@ export class HttpClient {
       const errorBody = await response.json().catch(() => ({}))
       const error = createErrorFromResponse(response.status, errorBody, requestId)
 
-      if (this.shouldRetry(method, response.status, attempt)) {
+      if (this.shouldRetry(method, response.status, attempt, idempotencyKey)) {
         const delay = this.getRetryDelay(response, attempt)
         await sleep(delay)
         return this.request(options, attempt + 1)
@@ -129,9 +129,17 @@ export class HttpClient {
     }
   }
 
-  private shouldRetry(method: string, statusCode: number, attempt: number): boolean {
+  private shouldRetry(
+    method: string,
+    statusCode: number,
+    attempt: number,
+    idempotencyKey?: string
+  ): boolean {
     if (attempt >= this.config.maxRetries) return false
-    if (method === 'POST') return false
+    // SC-106: POST is non-idempotent by default, but if the caller provided an
+    // Idempotency-Key the server will dedupe — so retrying is safe and unblocks
+    // the same transient 5xx/429 backoff that other verbs already get.
+    if (method === 'POST' && !idempotencyKey) return false
     return [408, 429, 500, 502, 503, 504].includes(statusCode)
   }
 

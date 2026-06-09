@@ -34,12 +34,30 @@ export interface Job {
   require_drivers_license?: boolean
   security_clearance_required?: boolean
   travel_percentage?: number
+  // SC-103: custom application questions configured for this job.
+  // Stored as JSONB on `core.jobs.custom_application_questions` (migration 145);
+  // ApplicationWizard reads this to render the per-job questions step instead
+  // of the previously-hardcoded empty array.
+  custom_application_questions?: CustomApplicationQuestion[]
   // Organization relation (populated in queries)
   organization?: {
     id: string
     name: string
     logo?: string
   }
+}
+
+/** SC-103: shape of a single per-job custom application question. */
+export interface CustomApplicationQuestion {
+  id: string
+  question: string
+  type: 'short_text' | 'long_text' | 'single_choice' | 'multiple_choice' | 'yes_no'
+  required: boolean
+  options?: string[]
+  /** Minimum characters for text questions (text types only). */
+  min_length?: number
+  /** Maximum characters for text questions (text types only). */
+  max_length?: number
 }
 
 export interface JobListParams {

@@ -1,4 +1,19 @@
+import { NotFoundError } from '../http/errors.js'
 import { Resource } from './base.js'
+
+/**
+ * Generate a per-call Idempotency-Key. The value only needs to be stable
+ * across the SDK's internal retries of a single logical request (which
+ * `HttpClient.request` does by threading the same `options` through the
+ * recursive call); a fresh UUID per `create()` invocation is sufficient.
+ */
+function generateIdempotencyKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  // Fallback for environments without crypto.randomUUID (very old Node).
+  return `idem-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
 
 export interface ApplicationJobSummary {
   id: string
@@ -165,10 +180,18 @@ export interface SendMessageParams {
 
 export class Applications extends Resource {
   /**
-   * Create a new job application
+   * Create a new job application.
+   *
+   * SC-109: always attaches a per-call Idempotency-Key so SDK-internal retries
+   * (enabled in SC-106 for POSTs that carry a key) dedupe at the server
+   * instead of double-creating an application row on a transient 5xx.
    */
   async create(params: CreateApplicationParams): Promise<Application> {
-    return this.post<Application>('/v1/applications', params)
+    return this.post<Application>(
+      '/v1/applications',
+      params,
+      generateIdempotencyKey()
+    )
   }
 
   /**
@@ -195,6 +218,12 @@ export class Applications extends Resource {
   /**
    * Get the current user's application for a job (parity with tRPC jobs.getMyApplicationForJob).
    * Returns null if the user has not applied to the job.
+   *
+   * SC-104: previously the catch swallowed *any* error and returned null, so
+   * a UI consumer couldn't distinguish "no application exists" from "API
+   * unreachable / 500 / network down" — both rendered as the empty state.
+   * Now: 404 still maps to null (no application), every other error
+   * propagates so the caller can show a real error UI or retry.
    */
   async getMyForJob(jobId: string): Promise<Application | null> {
     try {
@@ -202,8 +231,9 @@ export class Applications extends Resource {
         `/v1/jobs/${encodeURIComponent(jobId)}/applications/me`
       )
       return res?.data ?? null
-    } catch {
-      return null
+    } catch (error) {
+      if (error instanceof NotFoundError) return null
+      throw error
     }
   }
 

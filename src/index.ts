@@ -22,6 +22,7 @@ export type {
   JobListParams,
   JobListResponse,
   CreateJobParams,
+  CustomApplicationQuestion,
   ExternalJob,
   ExternalJobFilterOptions,
   OfficeJob,
