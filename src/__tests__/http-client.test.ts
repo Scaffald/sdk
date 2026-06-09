@@ -214,7 +214,7 @@ describe('HTTP Client', () => {
       expect(attemptCount).toBeGreaterThan(1)
     })
 
-    it('should not retry POST requests', async () => {
+    it('should not retry POST requests without an idempotency key', async () => {
       let attemptCount = 0
 
       server.use(
@@ -232,6 +232,40 @@ describe('HTTP Client', () => {
       ).rejects.toThrow(APIError)
 
       expect(attemptCount).toBe(1)
+    })
+
+    // SC-106: POST with Idempotency-Key is safe to retry because the server
+    // dedupes. applications.create attaches a key automatically (SC-109), so a
+    // transient 5xx no longer fails the first attempt outright.
+    it('should retry POST when an Idempotency-Key header is set', async () => {
+      let attemptCount = 0
+      const observedKeys: string[] = []
+
+      server.use(
+        http.post('https://api.scaffald.com/v1/applications', ({ request }) => {
+          attemptCount++
+          const key = request.headers.get('Idempotency-Key')
+          if (key) observedKeys.push(key)
+          if (attemptCount < 3) {
+            return HttpResponse.json(
+              { error: { message: 'Service unavailable' } },
+              { status: 503 }
+            )
+          }
+          return HttpResponse.json(
+            { id: 'app_1', job_id: 'job_1', user_id: 'u_1', status: 'pending', created_at: '2026-06-09T00:00:00Z' }
+          )
+        })
+      )
+
+      const result = await client.applications.create({
+        job_id: 'job_1',
+      })
+
+      expect(attemptCount).toBe(3)
+      expect(result.id).toBe('app_1')
+      // Same key threaded through every retry attempt.
+      expect(new Set(observedKeys).size).toBe(1)
     })
 
     it('should respect maxRetries config', async () => {

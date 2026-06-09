@@ -106,6 +106,12 @@ export interface CompletePrerequisitesParams {
   address: PrerequisiteAddress
   user_types: UserType[]
   industry_id: string
+  // SC-113: server requires both legal acceptances (z.literal(true) per
+  // SC-110). Declaring them on the SDK type so a typed builder can't silently
+  // strip them in transit. Modeled as `boolean` to match `types/prerequisites`
+  // and the typical form-state source; server enforces truthiness on receipt.
+  accepts_privacy_policy: boolean
+  accepts_terms_of_service: boolean
 }
 
 export interface CompletePrerequisitesResponse {
