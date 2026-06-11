@@ -141,8 +141,8 @@ export class Scaffald {
   public readonly analytics: Analytics
 
   constructor(config: ScaffaldConfig) {
-    if (!config.apiKey && !config.accessToken && !config.supabaseToken) {
-      throw new Error('Either apiKey, accessToken, or supabaseToken must be provided')
+    if (!config.apiKey && !config.accessToken && !config.supabaseToken && !config.anonKey) {
+      throw new Error('Either apiKey, accessToken, supabaseToken, or anonKey must be provided')
     }
 
     const internalConfig: ScaffaldConfigInternal = {
