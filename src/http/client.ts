@@ -47,7 +47,12 @@ export class HttpClient {
 
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      'User-Agent': 'scaffald-sdk-js/0.1.0',
+      // User-Agent is a forbidden request header in browsers (Fetch spec),
+      // and even when it slips through it triggers CORS preflight failures
+      // against Supabase Kong (which only allows a fixed header list).
+      // X-Client-Info is the Supabase-blessed equivalent and is allowed by
+      // Kong's default CORS config.
+      'X-Client-Info': 'scaffald-sdk-js/0.1.0',
       ...this.config.headers,
       ...headers,
     }
