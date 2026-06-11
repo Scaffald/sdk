@@ -41,9 +41,50 @@ describe('HTTP Client', () => {
       expect(jobs).toBeDefined()
     })
 
+    it('should accept anonKey alone (for public endpoints behind Supabase Kong)', async () => {
+      const clientWithAnonKey = new Scaffald({
+        anonKey: 'public_anon_key_123',
+      })
+      const jobs = await clientWithAnonKey.jobs.list()
+      expect(jobs).toBeDefined()
+    })
+
+    it('should send apikey header when anonKey is configured', async () => {
+      let capturedApikey: string | null = null
+      server.use(
+        http.get('https://api.scaffald.com/v1/jobs', ({ request }) => {
+          capturedApikey = request.headers.get('apikey')
+          return HttpResponse.json({ data: [] })
+        })
+      )
+
+      const clientWithAnonKey = new Scaffald({
+        supabaseToken: 'jwt_token',
+        anonKey: 'public_anon_key_xyz',
+      })
+      await clientWithAnonKey.jobs.list()
+
+      expect(capturedApikey).toBe('public_anon_key_xyz')
+    })
+
+    it('should not send apikey header when anonKey is omitted', async () => {
+      let capturedApikey: string | null | undefined = undefined
+      server.use(
+        http.get('https://api.scaffald.com/v1/jobs', ({ request }) => {
+          capturedApikey = request.headers.get('apikey')
+          return HttpResponse.json({ data: [] })
+        })
+      )
+
+      const clientNoAnon = new Scaffald({ apiKey: 'sk_test_123' })
+      await clientNoAnon.jobs.list()
+
+      expect(capturedApikey).toBeNull()
+    })
+
     it('should throw error when no auth is provided', () => {
       expect(() => new Scaffald({})).toThrow(
-        'Either apiKey, accessToken, or supabaseToken must be provided'
+        'Either apiKey, accessToken, supabaseToken, or anonKey must be provided'
       )
     })
   })

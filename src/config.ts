@@ -21,6 +21,15 @@ export interface ScaffaldConfig {
   supabaseToken?: string
 
   /**
+   * Supabase anon key. When set, the SDK sends it as an `apikey` request header
+   * on every call. Required whenever the API base sits behind Supabase's Kong
+   * gateway (e.g. `<project>.supabase.co/functions/v1/api`), which rejects
+   * requests without `apikey` even when Authorization carries a valid JWT.
+   * Safe to ship in client bundles — it's the public anon key, not a secret.
+   */
+  anonKey?: string
+
+  /**
    * Base URL for the Scaffald API
    * @default 'https://api.scaffald.com'
    */
@@ -51,10 +60,11 @@ export interface ScaffaldConfig {
 }
 
 export interface ScaffaldConfigInternal
-  extends Required<Omit<ScaffaldConfig, 'apiKey' | 'accessToken' | 'supabaseToken'>> {
+  extends Required<Omit<ScaffaldConfig, 'apiKey' | 'accessToken' | 'supabaseToken' | 'anonKey'>> {
   apiKey?: string
   accessToken?: string
   supabaseToken?: string
+  anonKey?: string
 }
 
 export const DEFAULT_CONFIG: Omit<ScaffaldConfigInternal, 'apiKey' | 'accessToken'> = {

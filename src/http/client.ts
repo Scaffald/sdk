@@ -60,6 +60,13 @@ export class HttpClient {
       requestHeaders['Authorization'] = `Bearer ${this.config.supabaseToken}`
     }
 
+    // Supabase Kong (the gateway in front of /functions/v1/*) rejects any
+    // request without an `apikey` header — even when Authorization carries a
+    // valid Bearer JWT. Attach it whenever the caller configured an anonKey.
+    if (this.config.anonKey) {
+      requestHeaders['apikey'] = this.config.anonKey
+    }
+
     if (method === 'POST' && idempotencyKey) {
       requestHeaders['Idempotency-Key'] = idempotencyKey
     }
