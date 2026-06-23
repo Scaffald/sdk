@@ -34,6 +34,17 @@ export interface FollowStatusResponse {
   followId?: string
 }
 
+export interface SavedJobFollow {
+  id: string
+  followee_id: string
+  created_at: string
+}
+
+export interface SavedJobsResponse {
+  data: SavedJobFollow[]
+  total: number
+}
+
 export class Follows extends Resource {
   /**
    * Get users that the current user is following
@@ -76,5 +87,38 @@ export class Follows extends Resource {
    */
   async unfollowUser(userId: string): Promise<void> {
     return this.del<void>(`/v1/follows/user/${userId}`)
+  }
+
+  /**
+   * Save (follow) a job so it can be revisited later.
+   */
+  async followJob(jobId: string): Promise<Follow> {
+    return this.post<Follow>('/v1/follows/job', { jobId })
+  }
+
+  /**
+   * Remove a job from saved jobs.
+   */
+  async unfollowJob(jobId: string): Promise<void> {
+    return this.del<void>(`/v1/follows/job/${jobId}`)
+  }
+
+  /**
+   * Check whether the current user has saved a job.
+   */
+  async getJobFollowStatus(jobId: string): Promise<FollowStatusResponse> {
+    return this.get<FollowStatusResponse>(`/v1/follows/status/job/${jobId}`)
+  }
+
+  /**
+   * List the current user's saved jobs (follow rows; pair the followee_id with
+   * job data from the jobs resource to render).
+   */
+  async listSavedJobs(params?: { limit?: number; offset?: number }): Promise<SavedJobsResponse> {
+    const queryParams = new URLSearchParams()
+    if (params?.limit !== undefined) queryParams.append('limit', params.limit.toString())
+    if (params?.offset !== undefined) queryParams.append('offset', params.offset.toString())
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : ''
+    return this.get<SavedJobsResponse>(`/v1/follows/saved-jobs${query}`)
   }
 }

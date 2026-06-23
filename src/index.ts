@@ -463,6 +463,8 @@ export type {
   FollowUserParams,
   FollowsListResponse,
   FollowStatusResponse,
+  SavedJobFollow,
+  SavedJobsResponse,
 } from './resources/follows.js'
 
 export type {
