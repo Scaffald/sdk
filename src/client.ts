@@ -12,6 +12,7 @@ import { ApiKeys } from './resources/api-keys.js'
 import { WebhooksManagement } from './resources/webhooks-management.js'
 import { Connections } from './resources/connections.js'
 import { Follows } from './resources/follows.js'
+import { Scheduling } from './resources/scheduling.js'
 import { Engagement } from './resources/engagement.js'
 import { BackgroundChecks } from './resources/background-checks.js'
 import { Inquiries } from './resources/inquiries.js'
@@ -84,6 +85,7 @@ export class Scaffald {
   public readonly webhooks: WebhooksManagement
   public readonly connections: Connections
   public readonly follows: Follows
+  public readonly scheduling: Scheduling
   public readonly engagement: Engagement
   public readonly backgroundChecks: BackgroundChecks
   public readonly inquiries: Inquiries
@@ -163,6 +165,7 @@ export class Scaffald {
     this.webhooks = new WebhooksManagement(this.http)
     this.connections = new Connections(this.http)
     this.follows = new Follows(this.http)
+    this.scheduling = new Scheduling(this.http)
     this.engagement = new Engagement(this.http)
     this.backgroundChecks = new BackgroundChecks(this.http)
     this.inquiries = new Inquiries(this.http)

@@ -468,6 +468,12 @@ export type {
 } from './resources/follows.js'
 
 export type {
+  SchedulingSlot,
+  SchedulingLink,
+  InterviewBooking,
+} from './resources/scheduling.js'
+
+export type {
   EngagementEventType,
   EngagementTargetType,
   TrackEventParams,
