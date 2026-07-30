@@ -21,6 +21,8 @@ export interface WorkLog {
   user_id: string
   status: WorkLogStatus
   project_id: string | null
+  /** Team the work was done for. Nullable — a log need not belong to a team. */
+  team_id: string | null
   time_entries: TimeEntry[] | null
   tasks_completed: string[] | null
   skills_used: string[] | null
@@ -138,6 +140,8 @@ export interface ListWorkLogsParams {
   pageSize?: number
   statuses?: WorkLogStatus[]
   projectId?: string
+  /** Filter to a single team. */
+  teamId?: string
   organizationId?: string
   dateFrom?: string
   dateTo?: string
@@ -164,6 +168,8 @@ export interface PublicProfileFeedParams {
 
 export interface CreateWorkLogParams {
   projectId?: string
+  /** core.teams id. Replaces the former [team:slug] description prefix (#425). */
+  teamId?: string | null
   entryType: WorkLogEntryType
   logDate: string
   endDate?: string
@@ -185,6 +191,8 @@ export interface CreateWorkLogParams {
 export interface UpdateWorkLogParams {
   workLogId: string
   projectId?: string
+  /** core.teams id; pass null to clear the association. */
+  teamId?: string | null
   entryType?: WorkLogEntryType
   logDate?: string
   endDate?: string
