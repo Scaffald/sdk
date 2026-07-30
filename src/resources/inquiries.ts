@@ -78,6 +78,60 @@ export interface InquiryResponse {
   data: Inquiry
 }
 
+/**
+ * A capability inquiry attached to an application, with everything hanging off
+ * it. Distinct from `Inquiry`: this models the ATS capability-inquiry feature
+ * (`core.application_inquiries`), not sender/recipient messaging.
+ *
+ * Returned bare rather than under a `data` key, matching the endpoint.
+ */
+export interface InquiryDetails {
+  inquiry: ApplicationInquiry
+  sections: InquirySection[]
+  comments: InquiryComment[]
+  capabilityResponses: InquiryCapabilityResponse[]
+}
+
+export interface ApplicationInquiry {
+  id: string
+  application_id: string
+  status: string
+  created_at: string
+  updated_at: string
+  created_by?: string | null
+  sent_at?: string | null
+  /** The schema carries a wide set of negotiable-term columns; passed through. */
+  [key: string]: unknown
+}
+
+export interface InquirySection {
+  id: string
+  inquiry_id: string
+  section_name: string
+  [key: string]: unknown
+}
+
+/** Mirrors core.inquiry_comments; every field below is NOT NULL in the schema. */
+export interface InquiryComment {
+  id: string
+  inquiry_id: string
+  section_name: string
+  sender_id: string
+  content: string
+  read_by: string[]
+  created_at: string
+  [key: string]: unknown
+}
+
+export interface InquiryCapabilityResponse {
+  id: string
+  inquiry_id: string
+  capability_name: string
+  response_value?: boolean | null
+  response_text?: string | null
+  [key: string]: unknown
+}
+
 export interface TemplatesResponse {
   data: InquiryTemplate[]
 }
@@ -164,5 +218,23 @@ export class Inquiries extends Resource {
    */
   async getHistory(inquiryId: string): Promise<any[]> {
     return super.get<any[]>(`/v1/inquiries/${inquiryId}/history`)
+  }
+
+  /**
+   * Get the capability inquiry attached to an application, with its sections,
+   * comments and capability responses.
+   *
+   * Resolves to `null` when the application has no inquiry yet — that is a
+   * normal state, not an error, and callers should render an empty state rather
+   * than a failure.
+   *
+   * Note this reads the ATS capability-inquiry feature
+   * (`core.application_inquiries`), which is a different concept from the
+   * sender/recipient `Inquiry` that `list` and `create` model.
+   */
+  async getByApplication(applicationId: string): Promise<InquiryDetails | null> {
+    return super.get<InquiryDetails | null>(
+      `/v1/inquiries/by-application/${applicationId}`,
+    )
   }
 }
