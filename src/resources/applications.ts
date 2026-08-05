@@ -106,7 +106,12 @@ export interface CreateApplicationParams {
 }
 
 export interface UpdateApplicationParams {
-  status?: Application['status']
+  /**
+   * NOTE: no `status`. PATCH /v1/applications/{id} is the applicant's endpoint
+   * and the server strips status from its body — while it did not, an
+   * applicant could promote their own application to `hired`. Employer-side
+   * moves go through `updateForOrganization`.
+   */
   current_location?: string
   willing_to_relocate?: boolean
   years_experience?: number
@@ -136,6 +141,13 @@ export interface ListApplicationsResponse {
   total: number
   limit: number
   offset: number
+}
+
+export interface UpdateEmployerApplicationParams {
+  /** Target pipeline stage. Validated server-side against the transition table. */
+  status?: Application['status']
+  /** Team member to assign, or null to unassign. */
+  assigned_to?: string | null
 }
 
 /** Filters for the employer-side pipeline list. */
@@ -359,6 +371,24 @@ export class Applications extends Resource {
 
     const query = queryParams.toString() ? `?${queryParams.toString()}` : ''
     return this.get<ListEmployerApplicationsResponse>(`/v1/employer/applications${query}`)
+  }
+
+  /**
+   * Move an application through the pipeline, or reassign it.
+   *
+   * The employer-side counterpart to `update()`, which is the applicant's and
+   * cannot change status. Requires organization access; the server validates
+   * the stage transition and records it in the activity log.
+   *
+   * @param id - The application ID
+   * @param params - Status and/or assignee changes
+   * @returns The updated application
+   */
+  async updateForOrganization(
+    id: string,
+    params: UpdateEmployerApplicationParams
+  ): Promise<EmployerApplication> {
+    return this.patch<EmployerApplication>(`/v1/employer/applications/${id}`, params)
   }
 
   /**

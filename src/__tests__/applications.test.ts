@@ -284,4 +284,58 @@ describe('Applications Resource', () => {
       expect(query.get('min_score')).toBeNull()
     })
   })
+  describe('updateForOrganization', () => {
+    it('hits the employer route, not the applicant one', async () => {
+      let seenPath = ''
+      let seenBody: Record<string, unknown> = {}
+
+      server.use(
+        http.patch('*/v1/employer/applications/:id', async ({ request }) => {
+          seenPath = new URL(request.url).pathname
+          seenBody = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({ id: 'app_1', status: 'interview' })
+        })
+      )
+
+      const result = await client.applications.updateForOrganization('app_1', {
+        status: 'interview',
+      })
+
+      expect(seenPath).toBe('/v1/employer/applications/app_1')
+      expect(seenBody.status).toBe('interview')
+      expect(result.status).toBe('interview')
+    })
+
+    it('sends assigned_to: null so a card can be unassigned', async () => {
+      // A truthiness check would drop null and make "unassign" a silent no-op.
+      let seenBody: Record<string, unknown> = {}
+
+      server.use(
+        http.patch('*/v1/employer/applications/:id', async ({ request }) => {
+          seenBody = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({ id: 'app_1', status: 'pending' })
+        })
+      )
+
+      await client.applications.updateForOrganization('app_1', { assigned_to: null })
+
+      expect('assigned_to' in seenBody).toBe(true)
+      expect(seenBody.assigned_to).toBeNull()
+    })
+
+    it('surfaces a refused transition rather than swallowing it', async () => {
+      server.use(
+        http.patch('*/v1/employer/applications/:id', () =>
+          HttpResponse.json(
+            { error: 'Bad Request', message: 'Cannot move from new to hired' },
+            { status: 400 }
+          )
+        )
+      )
+
+      await expect(
+        client.applications.updateForOrganization('app_1', { status: 'hired' })
+      ).rejects.toThrow()
+    })
+  })
 })
