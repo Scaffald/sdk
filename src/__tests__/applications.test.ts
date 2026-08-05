@@ -218,7 +218,7 @@ describe('Applications Resource', () => {
     })
 
     it('serialises every filter into the query string', async () => {
-      let query: URLSearchParams | null = null
+      let query = new URLSearchParams()
 
       server.use(
         http.get('*/v1/employer/applications', ({ request }) => {
@@ -239,21 +239,21 @@ describe('Applications Resource', () => {
         offset: 50,
       })
 
-      expect(query!.get('organization_id')).toBe('org_1')
-      expect(query!.get('job_id')).toBe('job_1')
-      expect(query!.get('status')).toBe('interview')
-      expect(query!.get('assigned_to')).toBe('user_9')
-      expect(query!.get('date_from')).toBe('2026-01-01')
-      expect(query!.get('date_to')).toBe('2026-06-30')
-      expect(query!.get('limit')).toBe('25')
-      expect(query!.get('offset')).toBe('50')
+      expect(query.get('organization_id')).toBe('org_1')
+      expect(query.get('job_id')).toBe('job_1')
+      expect(query.get('status')).toBe('interview')
+      expect(query.get('assigned_to')).toBe('user_9')
+      expect(query.get('date_from')).toBe('2026-01-01')
+      expect(query.get('date_to')).toBe('2026-06-30')
+      expect(query.get('limit')).toBe('25')
+      expect(query.get('offset')).toBe('50')
     })
 
     it('sends min_score=0 rather than dropping it', async () => {
       // A truthiness check would swallow 0, silently turning "show everything"
       // into "no score filter" — same value, but the caller cannot express an
       // explicit floor of zero.
-      let query: URLSearchParams | null = null
+      let query = new URLSearchParams()
 
       server.use(
         http.get('*/v1/employer/applications', ({ request }) => {
@@ -264,11 +264,11 @@ describe('Applications Resource', () => {
 
       await client.applications.listForOrganization({ min_score: 0 })
 
-      expect(query!.get('min_score')).toBe('0')
+      expect(query.get('min_score')).toBe('0')
     })
 
     it('omits filters that were not supplied', async () => {
-      let query: URLSearchParams | null = null
+      let query = new URLSearchParams()
 
       server.use(
         http.get('*/v1/employer/applications', ({ request }) => {
@@ -279,9 +279,9 @@ describe('Applications Resource', () => {
 
       await client.applications.listForOrganization({ status: 'hired' })
 
-      expect(query!.get('status')).toBe('hired')
-      expect(query!.get('organization_id')).toBeNull()
-      expect(query!.get('min_score')).toBeNull()
+      expect(query.get('status')).toBe('hired')
+      expect(query.get('organization_id')).toBeNull()
+      expect(query.get('min_score')).toBeNull()
     })
   })
 })
