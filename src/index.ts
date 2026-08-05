@@ -312,7 +312,17 @@ export type {
   PrerequisitesCheckResponse,
   CompletePrerequisitesParams,
   CompletePrerequisitesResponse,
-} from './types/prerequisites.js'
+  AcceptLegalParams,
+  AcceptLegalResponse,
+  LegalDocState,
+  LegalState,
+} from './resources/prerequisites.js'
+
+export type {
+  LegalDocType,
+  LegalDocument,
+  LegalDocumentsResponse,
+} from './resources/legal.js'
 
 export type {
   CCPARequestType,
