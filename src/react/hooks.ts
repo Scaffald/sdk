@@ -56,6 +56,8 @@ import type {
   PrerequisitesCheckResponse,
   CompletePrerequisitesParams,
   CompletePrerequisitesResponse,
+  AcceptLegalParams,
+  AcceptLegalResponse,
   ApiKey,
   ApiKeyCreated,
   CreateApiKeyParams,
@@ -1590,6 +1592,38 @@ export function useCompletePrerequisites(
       queryClient.invalidateQueries({ queryKey: ['prerequisites'] })
       // Also invalidate user profile data as it was updated
       queryClient.invalidateQueries({ queryKey: ['profiles'] })
+    },
+    ...options,
+  })
+}
+
+/**
+ * Hook to accept the currently-published legal document versions — used by
+ * the lightweight re-acceptance screen shown after a terms version bump.
+ *
+ * @example
+ * ```typescript
+ * const acceptLegal = useAcceptLegal({
+ *   onSuccess: () => router.replace(ROUTES.DASHBOARD.path),
+ * })
+ * await acceptLegal.mutateAsync({
+ *   accepts_terms_of_service: true,
+ *   accepts_privacy_policy: true,
+ * })
+ * ```
+ */
+export function useAcceptLegal(
+  options?: Omit<UseMutationOptions<AcceptLegalResponse, Error, AcceptLegalParams>, 'mutationFn'>
+) {
+  const client = useScaffald()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (params: AcceptLegalParams) => client.prerequisites.acceptLegal(params),
+    onSuccess: () => {
+      // Prefix match covers both key families in use:
+      // ['prerequisites'] (this package) and ['prerequisites','check'] (scf-core).
+      queryClient.invalidateQueries({ queryKey: ['prerequisites'] })
     },
     ...options,
   })

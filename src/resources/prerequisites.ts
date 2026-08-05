@@ -4,69 +4,6 @@ import { Resource } from './base.js'
 // Type Definitions
 // ============================================================================
 
-export interface Prerequisite {
-  id: string
-  name: string
-  description: string
-  category: string
-  required: boolean
-  completed: boolean
-  completion_percentage: number
-  fields?: Array<{ name: string; completed: boolean }>
-}
-
-export interface PrerequisitesResponse {
-  data: Prerequisite[]
-}
-
-export interface PrerequisiteValidationResult {
-  valid: boolean
-  required_prerequisites_met: boolean
-  optional_prerequisites_met: boolean
-  missing_required: Prerequisite[]
-  missing_optional: Prerequisite[]
-  completion_percentage: number
-}
-
-export interface PrerequisiteCheckResult {
-  prerequisite_id: string
-  completed: boolean
-  completion_percentage: number
-  missing_fields: string[]
-}
-
-export interface CompletionStats {
-  total_prerequisites: number
-  completed_prerequisites: number
-  required_prerequisites: number
-  required_completed: number
-  optional_prerequisites: number
-  optional_completed: number
-  overall_completion_percentage: number
-  required_completion_percentage: number
-  optional_completion_percentage: number
-}
-
-export interface ListPrerequisitesParams {
-  category?: string
-  required?: boolean
-  completed?: boolean
-}
-
-export interface ValidatePrerequisitesParams {
-  context?: string
-  job_id?: string
-}
-
-export interface GetMissingParams {
-  required_only?: boolean
-  context?: string
-}
-
-export interface GetStatsParams {
-  category?: string
-}
-
 // Onboarding prerequisites types
 export interface PrerequisiteAddress {
   street: string
@@ -88,15 +25,44 @@ export interface PrerequisitesData {
   industry_id: string
 }
 
+/**
+ * Per-document acceptance state. `requiredVersion` comes from the server's
+ * core.legal_documents is_current row — clients never embed a version
+ * constant. Versions are opaque, equality-compared strings.
+ */
+export interface LegalDocState {
+  requiredVersion: string
+  effectiveAt: string
+  url: string
+  acceptedVersion: string | null
+  acceptedAt: string | null
+  needsAcceptance: boolean
+}
+
+export interface LegalState {
+  needsAcceptance: boolean
+  documents: {
+    terms_of_service: LegalDocState
+    privacy_policy: LegalDocState
+  }
+}
+
 export interface PrerequisitesCheckResponse {
+  /** Profile complete AND both legal docs accepted at their current versions */
   isComplete: boolean
   hasName: boolean
   hasAddress: boolean
   hasUserTypes: boolean
   hasIndustry: boolean
+  /** Accepted AND the accepted version equals the current published version */
   hasAcceptedPrivacy: boolean
   hasAcceptedTerms: boolean
   completedAt: string | null
+  /** Profile fields missing → route to the full onboarding form */
+  needsOnboarding: boolean
+  /** Profile complete but legal missing/stale → route to the re-accept screen */
+  needsLegalAcceptance: boolean
+  legal: LegalState
   data: PrerequisitesData
 }
 
@@ -108,13 +74,22 @@ export interface CompletePrerequisitesParams {
   industry_id: string
   // SC-113: server requires both legal acceptances (z.literal(true) per
   // SC-110). Declaring them on the SDK type so a typed builder can't silently
-  // strip them in transit. Modeled as `boolean` to match `types/prerequisites`
-  // and the typical form-state source; server enforces truthiness on receipt.
+  // strip them in transit. Modeled as `boolean` to match the typical
+  // form-state source; server enforces truthiness on receipt.
   accepts_privacy_policy: boolean
   accepts_terms_of_service: boolean
 }
 
 export interface CompletePrerequisitesResponse {
+  success: boolean
+}
+
+export interface AcceptLegalParams {
+  accepts_terms_of_service: boolean
+  accepts_privacy_policy: boolean
+}
+
+export interface AcceptLegalResponse {
   success: boolean
 }
 
@@ -127,31 +102,11 @@ export interface CompletePrerequisitesResponse {
  */
 export class Prerequisites extends Resource {
   /**
-   * List all prerequisites
-   */
-  async list(params?: ListPrerequisitesParams): Promise<PrerequisitesResponse> {
-    return super.get<PrerequisitesResponse>('/v1/prerequisites', params)
-  }
-
-  /**
-   * Get prerequisite by ID
-   */
-  async getById(id: string): Promise<{ data: Prerequisite }> {
-    return super.get<{ data: Prerequisite }>(`/v1/prerequisites/${id}`)
-  }
-
-  /**
-   * Check overall prerequisites status for current user
+   * Check overall prerequisites status for current user, including whether
+   * the currently-published legal document versions have been accepted.
    */
   async check(): Promise<PrerequisitesCheckResponse> {
-    return super.get<PrerequisitesCheckResponse>('/v1/prerequisites/check')
-  }
-
-  /**
-   * Check specific prerequisite completion status
-   */
-  async checkPrerequisite(id: string): Promise<{ data: PrerequisiteCheckResult }> {
-    return super.get<{ data: PrerequisiteCheckResult }>(`/v1/prerequisites/${id}/check`)
+    return this.get<PrerequisitesCheckResponse>('/v1/prerequisites/check')
   }
 
   /**
@@ -162,25 +117,10 @@ export class Prerequisites extends Resource {
   }
 
   /**
-   * Validate prerequisites for context
+   * Accept the currently-published legal document versions. Used by the
+   * lightweight re-acceptance screen shown after a terms version bump.
    */
-  async validate(
-    params?: ValidatePrerequisitesParams
-  ): Promise<{ data: PrerequisiteValidationResult }> {
-    return super.get<{ data: PrerequisiteValidationResult }>('/v1/prerequisites/validate', params)
-  }
-
-  /**
-   * Get missing prerequisites
-   */
-  async getMissing(params?: GetMissingParams): Promise<PrerequisitesResponse> {
-    return super.get<PrerequisitesResponse>('/v1/prerequisites/missing', params)
-  }
-
-  /**
-   * Get completion statistics
-   */
-  async getCompletionStats(params?: GetStatsParams): Promise<{ data: CompletionStats }> {
-    return super.get<{ data: CompletionStats }>('/v1/prerequisites/stats', params)
+  async acceptLegal(params: AcceptLegalParams): Promise<AcceptLegalResponse> {
+    return this.post<AcceptLegalResponse>('/v1/prerequisites/accept-legal', params)
   }
 }

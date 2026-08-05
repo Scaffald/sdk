@@ -5956,123 +5956,10 @@ export const handlers = [
     })
   }),
 
-  // ===== New Prerequisites Handlers (API v1) =====
-  // ===== Prerequisites Handlers - Order matters! Specific paths before :id =====
-  // GET /v1/prerequisites - List prerequisites
-  http.get(`${BASE_URL}/v1/prerequisites`, ({ request }) => {
-    const url = new URL(request.url)
-    const category = url.searchParams.get('category')
-    const required = url.searchParams.get('required')
-    const completed = url.searchParams.get('completed')
-
-    return HttpResponse.json({
-      data: [
-        {
-          id: 'prereq_profile',
-          name: 'Complete Profile',
-          description: 'Fill out your basic profile information',
-          category: category || 'profile',
-          required: required === 'true',
-          completed: completed === 'true',
-          completion_percentage: 100,
-        },
-      ],
-    })
-  }),
-
-  // GET /v1/prerequisites/check - Check all prerequisites (BEFORE :id)
-  http.get(`${BASE_URL}/v1/prerequisites/check`, () => {
-    return HttpResponse.json({
-      data: {
-        all_completed: true,
-        missing: [],
-      },
-    })
-  }),
-
-  // GET /v1/prerequisites/validate - Validate prerequisites (BEFORE :id)
-  http.get(`${BASE_URL}/v1/prerequisites/validate`, () => {
-    return HttpResponse.json({
-      data: {
-        valid: true,
-        required_prerequisites_met: true,
-        optional_prerequisites_met: true,
-        missing_required: [],
-        missing_optional: [],
-        completion_percentage: 100,
-      },
-    })
-  }),
-
-  // GET /v1/prerequisites/missing - Get missing prerequisites (BEFORE :id)
-  http.get(`${BASE_URL}/v1/prerequisites/missing`, () => {
-    return HttpResponse.json({
-      data: [],
-    })
-  }),
-
-  // GET /v1/prerequisites/stats - Get completion stats (BEFORE :id)
-  http.get(`${BASE_URL}/v1/prerequisites/stats`, () => {
-    return HttpResponse.json({
-      data: {
-        total_prerequisites: 10,
-        completed_prerequisites: 7,
-        required_prerequisites: 5,
-        required_completed: 4,
-        optional_prerequisites: 5,
-        optional_completed: 3,
-        overall_completion_percentage: 70,
-        required_completion_percentage: 80,
-        optional_completion_percentage: 60,
-      },
-    })
-  }),
-
-  // POST /v1/prerequisites/complete - Complete prerequisite (BEFORE :id)
-  http.post(`${BASE_URL}/v1/prerequisites/complete`, async ({ request }) => {
-    const body = (await request.json()) as any
-    return HttpResponse.json({
-      data: {
-        prerequisite_id: body.prerequisite_id,
-        completed: true,
-      },
-    })
-  }),
-
-  // GET /v1/prerequisites/:id/check - Check specific prerequisite (BEFORE bare :id)
-  http.get(`${BASE_URL}/v1/prerequisites/:id/check`, ({ params }) => {
-    return HttpResponse.json({
-      data: {
-        prerequisite_id: params.id as string,
-        completed: true,
-        completion_percentage: 100,
-        missing_fields: [],
-      },
-    })
-  }),
-
-  // GET /v1/prerequisites/:id - Get prerequisite by ID (LAST)
-  http.get(`${BASE_URL}/v1/prerequisites/:id`, ({ params }) => {
-    const { id } = params
-    if (id === 'invalid_id') {
-      return HttpResponse.json({ error: 'Prerequisite not found' }, { status: 404 })
-    }
-    return HttpResponse.json({
-      data: {
-        id: id as string,
-        name: 'Complete Profile',
-        description: 'Fill out your basic profile information',
-        category: 'profile',
-        required: true,
-        completed: true,
-        completion_percentage: 100,
-        fields: [
-          { name: 'first_name', completed: true },
-          { name: 'last_name', completed: true },
-        ],
-      },
-    })
-  }),
+  // ===== Prerequisites Handlers (API v1) =====
+  // Only /check, /complete and /accept-legal exist server-side; the legacy
+  // list/validate/missing/stats/:id handlers mocked endpoints that were never
+  // implemented and were removed from the SDK alongside them.
 
   // GET /v1/prerequisites/check
   http.get(`${BASE_URL}/v1/prerequisites/check`, () => {
@@ -6082,10 +5969,35 @@ export const handlers = [
       hasAddress: true,
       hasUserTypes: true,
       hasIndustry: true,
+      hasAcceptedPrivacy: true,
       hasAcceptedTerms: true,
+      completedAt: '2024-01-15T10:00:00Z',
+      needsOnboarding: false,
+      needsLegalAcceptance: false,
+      legal: {
+        needsAcceptance: false,
+        documents: {
+          terms_of_service: {
+            requiredVersion: 'v1.0',
+            effectiveAt: '2025-03-01T00:00:00Z',
+            url: '/auth/terms',
+            acceptedVersion: 'v1.0',
+            acceptedAt: '2024-01-15T10:00:00Z',
+            needsAcceptance: false,
+          },
+          privacy_policy: {
+            requiredVersion: 'v1.0',
+            effectiveAt: '2025-03-01T00:00:00Z',
+            url: '/auth/privacy',
+            acceptedVersion: 'v1.0',
+            acceptedAt: '2024-01-15T10:00:00Z',
+            needsAcceptance: false,
+          },
+        },
+      },
       data: {
-        firstName: 'John',
-        lastName: 'Doe',
+        first_name: 'John',
+        last_name: 'Doe',
         address: {
           street: '123 Main St',
           city: 'San Francisco',
@@ -6093,8 +6005,8 @@ export const handlers = [
           zip: '94102',
           country: 'US',
         },
-        userTypes: ['worker'],
-        industryId: 'ind_tech',
+        user_types: ['worker'],
+        industry_id: 'ind_tech',
       },
     })
   }),
@@ -6104,7 +6016,44 @@ export const handlers = [
     const _body = await request.json()
     return HttpResponse.json({
       success: true,
-      completedAt: new Date().toISOString(),
+    })
+  }),
+
+  // POST /v1/prerequisites/accept-legal
+  http.post(`${BASE_URL}/v1/prerequisites/accept-legal`, async ({ request }) => {
+    const body = (await request.json()) as {
+      accepts_terms_of_service?: boolean
+      accepts_privacy_policy?: boolean
+    }
+    if (body.accepts_terms_of_service !== true || body.accepts_privacy_policy !== true) {
+      return HttpResponse.json(
+        { error: 'Validation error', message: 'Both acceptances are required' },
+        { status: 400 }
+      )
+    }
+    return HttpResponse.json({ success: true })
+  }),
+
+  // ===== Legal Handlers =====
+  // GET /v1/legal - current legal document versions (public)
+  http.get(`${BASE_URL}/v1/legal`, () => {
+    return HttpResponse.json({
+      documents: [
+        {
+          doc_type: 'privacy_policy',
+          version: 'v1.0',
+          effective_at: '2025-03-01T00:00:00Z',
+          url: '/auth/privacy',
+          title: 'Privacy Policy',
+        },
+        {
+          doc_type: 'terms_of_service',
+          version: 'v1.0',
+          effective_at: '2025-03-01T00:00:00Z',
+          url: '/auth/terms',
+          title: 'Terms of Service',
+        },
+      ],
     })
   }),
 
