@@ -42,6 +42,7 @@ export type {
   ListApplicationsParams,
   ListApplicationsResponse,
   ListEmployerApplicationsParams,
+  UpdateEmployerApplicationParams,
   ListEmployerApplicationsResponse,
   EmployerApplication,
   EmployerApplicationCandidate,
