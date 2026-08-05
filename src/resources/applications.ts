@@ -138,6 +138,83 @@ export interface ListApplicationsResponse {
   offset: number
 }
 
+/** Filters for the employer-side pipeline list. */
+export interface ListEmployerApplicationsParams {
+  /** Narrow to one organization. Omit to span every organization the caller can act for. */
+  organization_id?: string
+  job_id?: string
+  status?: Application['status']
+  /** Team member the application is assigned to. */
+  assigned_to?: string
+  /** Minimum `score_total`. */
+  min_score?: number
+  /** ISO timestamp; filters on application creation. */
+  date_from?: string
+  /** ISO timestamp; filters on application creation. */
+  date_to?: string
+  limit?: number
+  offset?: number
+}
+
+/**
+ * Candidate identity attached to an employer-side application.
+ *
+ * Only what a pipeline card needs — this is not the full profile, and it is
+ * deliberately not the applicant's contact details.
+ */
+export interface EmployerApplicationCandidate {
+  id: string
+  display_name: string | null
+  username: string | null
+  headline: string | null
+  avatar_url: string | null
+  avatar_path: string | null
+}
+
+export interface EmployerApplicationJob {
+  id: string
+  title: string | null
+  location: string | null
+  employment_type: string | null
+  organization_id: string | null
+  pay_range_min_cents: number | null
+  pay_range_max_cents: number | null
+  pay_range_type: string | null
+}
+
+/**
+ * An application as the hiring side sees it.
+ *
+ * Field names mirror the database rather than the older office UI's
+ * assumptions: the score is `score_total`, and the flat screening answers live
+ * inside `screening_answers` rather than as columns.
+ */
+export interface EmployerApplication {
+  id: string
+  job_id: string
+  user_id: string
+  status: Application['status']
+  created_at: string
+  updated_at: string | null
+  stage_changed_at: string | null
+  score_total: number | null
+  source: string | null
+  union_status: Record<string, unknown> | null
+  assigned_to: string | null
+  is_shortlisted: boolean | null
+  screening_answers: Record<string, unknown> | null
+  attachment_metadata: Record<string, unknown> | null
+  candidate: EmployerApplicationCandidate | null
+  job: EmployerApplicationJob | null
+}
+
+export interface ListEmployerApplicationsResponse {
+  data: EmployerApplication[]
+  total: number
+  limit: number
+  offset: number
+}
+
 export interface GetUploadUrlParams {
   application_id: string
   attachment_type: 'resume' | 'cover_letter' | 'portfolio' | 'assessment' | 'video_interview'
@@ -250,6 +327,38 @@ export class Applications extends Resource {
 
     const query = queryParams.toString() ? `?${queryParams.toString()}` : ''
     return this.get<ListApplicationsResponse>(`/v1/applications${query}`)
+  }
+
+  /**
+   * List applications to jobs posted by organizations the caller can act for.
+   *
+   * This is the hiring side of the pipeline, not the candidate's own
+   * applications — `list()` is scoped to the authenticated user and is what an
+   * applicant sees. Access requires organization ownership or a qualifying
+   * role; callers with no organizations receive an empty list rather than a
+   * 403, so a personal account renders an empty pipeline instead of an error.
+   *
+   * @param params - Organization, job, stage and pagination filters
+   * @returns Applications with candidate and job embedded
+   */
+  async listForOrganization(
+    params?: ListEmployerApplicationsParams
+  ): Promise<ListEmployerApplicationsResponse> {
+    const queryParams = new URLSearchParams()
+    if (params?.organization_id) queryParams.append('organization_id', params.organization_id)
+    if (params?.job_id) queryParams.append('job_id', params.job_id)
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.assigned_to) queryParams.append('assigned_to', params.assigned_to)
+    if (params?.min_score !== undefined) {
+      queryParams.append('min_score', params.min_score.toString())
+    }
+    if (params?.date_from) queryParams.append('date_from', params.date_from)
+    if (params?.date_to) queryParams.append('date_to', params.date_to)
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    if (params?.offset) queryParams.append('offset', params.offset.toString())
+
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : ''
+    return this.get<ListEmployerApplicationsResponse>(`/v1/employer/applications${query}`)
   }
 
   /**
