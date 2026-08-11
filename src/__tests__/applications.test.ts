@@ -173,6 +173,10 @@ describe('Applications Resource', () => {
       is_shortlisted: false,
       screening_answers: { years_experience: 5 },
       attachment_metadata: {},
+      stage_history: [
+        { from_status: 'new', to_status: 'screen', actor_user_id: null, changed_at: '2026-08-02T00:00:00Z' },
+        { from_status: 'screen', to_status: 'interview', actor_user_id: null, changed_at: '2026-08-04T00:00:00Z' },
+      ],
       candidate: {
         id: 'user_1',
         display_name: 'Eric Wong',
@@ -215,6 +219,10 @@ describe('Applications Resource', () => {
       expect(result.data[0].candidate?.display_name).toBe('Eric Wong')
       expect(result.data[0].job?.title).toBe('Senior Software Engineer')
       expect(result.data[0].score_total).toBe(82)
+      // Time-to-hire and funnel conversion read this; an empty array is
+      // what made both metrics structurally zero.
+      expect(result.data[0].stage_history).toHaveLength(2)
+      expect(result.data[0].stage_history[0].to_status).toBe('screen')
     })
 
     it('serialises every filter into the query string', async () => {

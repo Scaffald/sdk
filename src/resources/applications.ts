@@ -194,6 +194,15 @@ export interface EmployerApplicationJob {
   pay_range_type: string | null
 }
 
+/** One recorded pipeline transition. */
+export interface EmployerApplicationStageChange {
+  /** Null for the first recorded transition. */
+  from_status: string | null
+  to_status: string
+  actor_user_id: string | null
+  changed_at: string
+}
+
 /**
  * An application as the hiring side sees it.
  *
@@ -216,6 +225,12 @@ export interface EmployerApplication {
   is_shortlisted: boolean | null
   screening_answers: Record<string, unknown> | null
   attachment_metadata: Record<string, unknown> | null
+  /**
+   * Ordered stage transitions. Time-to-hire and funnel conversion are computed
+   * from this — while it was absent the office UI hardcoded it empty and both
+   * metrics were structurally zero.
+   */
+  stage_history: EmployerApplicationStageChange[]
   candidate: EmployerApplicationCandidate | null
   job: EmployerApplicationJob | null
 }
