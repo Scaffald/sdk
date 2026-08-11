@@ -357,6 +357,24 @@ export class Applications extends Resource {
   }
 
   /**
+   * Get one application from the hiring side.
+   *
+   * Distinct from `retrieve()`, which is the applicant's projection: this
+   * returns the same row shape `listForOrganization()` does — candidate
+   * identity and stage history included — so a detail view and a kanban card
+   * can be built from one transform rather than two that drift apart.
+   *
+   * 404 rather than 403 for an application outside the caller's
+   * organizations, so the endpoint cannot be used to probe which ids exist.
+   *
+   * @param id - Application id
+   * @returns The application with candidate, job and stage history embedded
+   */
+  async retrieveForOrganization(id: string): Promise<EmployerApplication> {
+    return this.get<EmployerApplication>(`/v1/employer/applications/${id}`)
+  }
+
+  /**
    * List applications to jobs posted by organizations the caller can act for.
    *
    * This is the hiring side of the pipeline, not the candidate's own
