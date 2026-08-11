@@ -90,9 +90,9 @@ describe('Compliance Resource — EEO report', () => {
       period_end: '2026-03-31',
     })
 
-    expect(params!.get('organization_id')).toBe('org_1')
-    expect(params!.get('period_start')).toBe('2026-01-01')
-    expect(params!.get('period_end')).toBe('2026-03-31')
+    expect(params?.get('organization_id')).toBe('org_1')
+    expect(params?.get('period_start')).toBe('2026-01-01')
+    expect(params?.get('period_end')).toBe('2026-03-31')
   })
 
   it('preserves a null impactRatio instead of coercing it to zero', async () => {

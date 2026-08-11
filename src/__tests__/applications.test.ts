@@ -347,3 +347,44 @@ describe('Applications Resource', () => {
     })
   })
 })
+
+describe('Applications Resource — retrieveForOrganization', () => {
+  const employerClient = new Scaffald({ apiKey: 'sk_test_123' })
+
+  it('reads one application from the hiring side, with candidate and stage history', async () => {
+    server.use(
+      http.get('https://api.scaffald.com/v1/employer/applications/app_1', () =>
+        HttpResponse.json({
+          id: 'app_1',
+          job_id: 'job_1',
+          user_id: 'user_1',
+          status: 'interview',
+          candidate: { id: 'user_1', display_name: 'Dana Reyes' },
+          job: { id: 'job_1', title: 'Commercial Electrician', organization_id: 'org_1' },
+          stage_history: [{ from_status: 'pending', to_status: 'interview' }],
+        }),
+      ),
+    )
+
+    const application = await employerClient.applications.retrieveForOrganization('app_1')
+
+    // The point of this method over `retrieve()` is that it returns the same
+    // shape as `listForOrganization()`, so one transform serves both.
+    expect(application.candidate?.display_name).toBe('Dana Reyes')
+    expect(application.stage_history).toHaveLength(1)
+    expect(application.job?.organization_id).toBe('org_1')
+  })
+
+  it('surfaces a 404 for an application outside the caller organizations', async () => {
+    // 404 rather than 403 on purpose: a 403 would confirm the id exists.
+    server.use(
+      http.get('https://api.scaffald.com/v1/employer/applications/app_2', () =>
+        HttpResponse.json({ error: 'Not Found' }, { status: 404 }),
+      ),
+    )
+
+    await expect(
+      employerClient.applications.retrieveForOrganization('app_2'),
+    ).rejects.toThrow()
+  })
+})
