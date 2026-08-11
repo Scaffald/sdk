@@ -485,6 +485,13 @@ export type {
 } from './resources/follows.js'
 
 export type {
+  EEOReport,
+  EEOJobGroup,
+  EEOCategoryTotals,
+  GetEEOReportParams,
+} from './resources/compliance.js'
+
+export type {
   SchedulingSlot,
   SchedulingLink,
   InterviewBooking,
