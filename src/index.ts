@@ -47,6 +47,7 @@ export type {
   EmployerApplication,
   EmployerApplicationCandidate,
   EmployerApplicationJob,
+  EmployerApplicationStageChange,
   GetUploadUrlParams,
   GetUploadUrlResponse,
   ConfirmUploadParams,
