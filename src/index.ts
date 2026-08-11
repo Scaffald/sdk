@@ -488,6 +488,11 @@ export type {
   SchedulingSlot,
   SchedulingLink,
   InterviewBooking,
+  EmployerInterviewSlot,
+  EmployerSchedulingLink,
+  ListEmployerSchedulingParams,
+  CreateInterviewSlotParams,
+  CreateSchedulingLinkParams,
 } from './resources/scheduling.js'
 
 export type {
