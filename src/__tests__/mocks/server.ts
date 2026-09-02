@@ -1387,23 +1387,6 @@ export const handlers = [
     })
   }),
 
-  // GET /v1/profiles/employers/:slug - Get employer profile
-  http.get(`${BASE_URL}/v1/profiles/employers/:slug`, ({ params }) => {
-    const { slug } = params
-    return HttpResponse.json({
-      id: 'emp_1',
-      slug,
-      name: 'Tech Startup Inc',
-      description: 'Innovative startup',
-      logo_url: 'https://example.com/startup-logo.png',
-      website: 'https://startup.com',
-      industry: 'SaaS',
-      location: 'New York, NY',
-      created_at: '2021-01-01T00:00:00Z',
-      active_jobs_count: 10,
-    })
-  }),
-
   // ===== Reviews Endpoints =====
 
   // GET /reviews/soft-skills - Get soft skills

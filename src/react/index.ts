@@ -15,7 +15,6 @@ export {
   useWithdrawApplication,
   useUserProfile,
   useOrganizationProfile,
-  useEmployerProfile,
   useIndustries,
   useIndustry,
   useOrganization,
