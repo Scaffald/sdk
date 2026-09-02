@@ -19,7 +19,6 @@ import {
   useWithdrawApplication,
   useUserProfile,
   useOrganizationProfile,
-  useEmployerProfile,
   usePrerequisites,
   useCompletePrerequisites,
   useIndustries,
@@ -307,18 +306,6 @@ describe('React Hooks', () => {
         expect(result.current.data).toBeDefined()
         expect(result.current.data?.slug).toBe('acme-corp')
         expect(result.current.data?.name).toBe('ACME Corporation')
-      })
-    })
-
-    describe('useEmployerProfile', () => {
-      it('should fetch employer profile', async () => {
-        const { result } = renderHook(() => useEmployerProfile('tech-startup'), { wrapper: createWrapper() })
-
-        await waitFor(() => expect(result.current.isSuccess).toBe(true))
-
-        expect(result.current.data).toBeDefined()
-        expect(result.current.data?.slug).toBe('tech-startup')
-        expect(result.current.data?.name).toBe('Tech Startup Inc')
       })
     })
   })

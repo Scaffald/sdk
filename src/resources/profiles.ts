@@ -38,19 +38,6 @@ export interface OrganizationProfile {
   job_count: number
 }
 
-export interface EmployerProfile {
-  id: string
-  slug: string
-  name: string
-  description?: string
-  logo_url?: string
-  website?: string
-  industry?: string
-  location?: string
-  created_at: string
-  active_jobs_count: number
-}
-
 // ===========================
 // Profile Management Types
 // ===========================
@@ -163,13 +150,6 @@ export class Profiles extends Resource {
    */
   async getOrganization(slug: string): Promise<OrganizationProfile> {
     return this.get<OrganizationProfile>(`/v1/profiles/organizations/${slug}`)
-  }
-
-  /**
-   * Get an employer profile by slug
-   */
-  async getEmployer(slug: string): Promise<EmployerProfile> {
-    return this.get<EmployerProfile>(`/v1/profiles/employers/${slug}`)
   }
 
   // ===== Profile Management - General =====

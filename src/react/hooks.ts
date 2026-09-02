@@ -17,7 +17,6 @@ import type {
   WithdrawApplicationParams,
   UserProfile,
   OrganizationProfile,
-  EmployerProfile,
   Industry,
   IndustryListResponse,
   Organization,
@@ -508,33 +507,6 @@ export function useOrganizationProfile(
   return useQuery({
     queryKey: ['profiles', 'organization', slug],
     queryFn: () => client.profiles.getOrganization(slug),
-    enabled: !!slug,
-    staleTime: 10 * 60 * 1000,
-    ...options,
-  })
-}
-
-/**
- * Hook to fetch an employer profile
- *
- * @example
- * ```tsx
- * function EmployerPage({ slug }: { slug: string }) {
- *   const { data: employer } = useEmployerProfile(slug)
- *
- *   return <div>{employer?.name}</div>
- * }
- * ```
- */
-export function useEmployerProfile(
-  slug: string,
-  options?: Omit<UseQueryOptions<EmployerProfile>, 'queryKey' | 'queryFn'>
-) {
-  const client = useScaffald()
-
-  return useQuery({
-    queryKey: ['profiles', 'employer', slug],
-    queryFn: () => client.profiles.getEmployer(slug),
     enabled: !!slug,
     staleTime: 10 * 60 * 1000,
     ...options,

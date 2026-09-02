@@ -50,22 +50,4 @@ describe('Profiles Resource', () => {
       expect(org.logo_url).toBeDefined()
     })
   })
-
-  describe('getEmployer', () => {
-    it('should get an employer profile by slug', async () => {
-      const employer = await client.profiles.getEmployer('startup-inc')
-
-      expect(employer).toHaveProperty('id')
-      expect(employer).toHaveProperty('slug')
-      expect(employer.slug).toBe('startup-inc')
-      expect(employer).toHaveProperty('name')
-      expect(employer).toHaveProperty('active_jobs_count')
-    })
-
-    it('should return employer with industry', async () => {
-      const employer = await client.profiles.getEmployer('consulting-firm')
-
-      expect(employer.industry).toBeDefined()
-    })
-  })
 })

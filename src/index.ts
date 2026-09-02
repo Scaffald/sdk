@@ -59,7 +59,6 @@ export type {
 export type {
   UserProfile,
   OrganizationProfile,
-  EmployerProfile,
   Certification,
   CurrentUser,
   GeneralInfo,
