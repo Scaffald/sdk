@@ -13,6 +13,7 @@ import { ApiKeys } from './resources/api-keys.js'
 import { WebhooksManagement } from './resources/webhooks-management.js'
 import { Connections } from './resources/connections.js'
 import { Follows } from './resources/follows.js'
+import { Moderation } from './resources/moderation.js'
 import { Compliance } from './resources/compliance.js'
 import { Scheduling } from './resources/scheduling.js'
 import { Engagement } from './resources/engagement.js'
@@ -88,6 +89,7 @@ export class Scaffald {
   public readonly webhooks: WebhooksManagement
   public readonly connections: Connections
   public readonly follows: Follows
+  public readonly moderation: Moderation
   public readonly compliance: Compliance
   public readonly scheduling: Scheduling
   public readonly engagement: Engagement
@@ -170,6 +172,7 @@ export class Scaffald {
     this.webhooks = new WebhooksManagement(this.http)
     this.connections = new Connections(this.http)
     this.follows = new Follows(this.http)
+    this.moderation = new Moderation(this.http)
     this.compliance = new Compliance(this.http)
     this.scheduling = new Scheduling(this.http)
     this.engagement = new Engagement(this.http)

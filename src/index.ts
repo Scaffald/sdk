@@ -485,6 +485,17 @@ export type {
 } from './resources/follows.js'
 
 export type {
+  ReportSubjectType,
+  ReportReason,
+  ReportStatus,
+  ContentReport,
+  CreateReportParams,
+  UserBlock,
+  ReportsListResponse,
+  BlocksListResponse,
+} from './resources/moderation.js'
+
+export type {
   EEOReport,
   EEOJobGroup,
   EEOCategoryTotals,
