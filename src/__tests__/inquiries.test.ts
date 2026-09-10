@@ -10,37 +10,15 @@ describe('Inquiries Resource', () => {
     apiKey: 'sk_test_123',
   })
 
-  describe('list', () => {
-    it('should list sent inquiries', async () => {
-      const result = await client.inquiries.list({ direction: 'sent' })
-
-      expect(result.data).toBeDefined()
-      expect(Array.isArray(result.data)).toBe(true)
-      expect(result.pagination).toBeDefined()
-    })
-
-    it('should list received inquiries', async () => {
-      const result = await client.inquiries.list({ direction: 'received' })
-
-      expect(result.data).toBeDefined()
-      expect(result.pagination).toBeDefined()
-    })
-
-    it('should filter by status', async () => {
-      const result = await client.inquiries.list({ status: 'pending' })
-
-      expect(result.data).toBeDefined()
-      expect(result.pagination).toBeDefined()
-    })
-
-    it('should filter by inquiry type', async () => {
-      const result = await client.inquiries.list({ inquiry_type: 'job_inquiry' })
-
-      expect(result.data).toBeDefined()
-      expect(result.pagination).toBeDefined()
-    })
-  })
-
+  // The `list` and `create` suites used to be here, and are gone with the
+  // methods they covered (Scaffald/SaaS#476).
+  //
+  // Worth recording why they were no help: they passed for as long as they
+  // existed, against a mock server in this directory that answered
+  // /v1/inquiries happily. The real endpoint read core.inquiries, a table that
+  // has never existed, and returned 500. A test whose fixture invents the
+  // endpoint cannot fail when the endpoint is missing — which is the whole
+  // reason the schema guard in the API repo reads the generated types instead.
   describe('getById', () => {
     it('should get inquiry by ID', async () => {
       const result = await client.inquiries.getById('inq_123')
@@ -51,46 +29,6 @@ describe('Inquiries Resource', () => {
 
     it('should handle inquiry not found', async () => {
       await expect(client.inquiries.getById('invalid_id')).rejects.toThrow()
-    })
-  })
-
-  describe('create', () => {
-    it('should create a new inquiry', async () => {
-      const params: CreateInquiryParams = {
-        recipient_id: 'user_456',
-        subject: 'Question about job posting',
-        message: 'I would like to know more about the position.',
-        inquiry_type: 'job_inquiry',
-        job_id: 'job_789',
-      }
-
-      const result = await client.inquiries.create(params)
-
-      expect(result.data).toBeDefined()
-      expect(result.data.subject).toBeDefined()
-      expect(result.data.status).toBeDefined()
-    })
-
-    it('should create inquiry using template', async () => {
-      const params: CreateInquiryParams = {
-        recipient_id: 'user_456',
-        template_id: 'tpl_123',
-        job_id: 'job_789',
-      }
-
-      const result = await client.inquiries.create(params)
-
-      expect(result.data).toBeDefined()
-      expect(result.data.subject).toBeDefined()
-    })
-
-    it('should handle validation errors', async () => {
-      await expect(
-        client.inquiries.create({
-          recipient_id: 'user_456',
-          subject: 'Test',
-        } as CreateInquiryParams)
-      ).rejects.toThrow()
     })
   })
 
