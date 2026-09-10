@@ -190,8 +190,6 @@ export type {
   CompletionMilestoneThreshold,
   SectionStatus,
   CompletionStatusPayload,
-  DismissNudgeParams,
-  DismissNudgeResponse,
   PersonalizedBenefit,
   PersonalizedBenefitsResponse,
 } from './resources/profile-completion.js'

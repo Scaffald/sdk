@@ -17,17 +17,10 @@ describe('ProfileCompletion Resource', () => {
     })
   })
 
-  describe('dismissNudge', () => {
-    it('should dismiss a profile completion nudge', async () => {
-      const result = await client.profileCompletion.dismissNudge({
-        nudgeId: 'nudge_123',
-        reason: 'not_interested',
-      })
-
-      expect(result).toBeDefined()
-      expect(result.success).toBeDefined()
-    })
-  })
+  // The `dismissNudge` suite used to be here. It passed against the mock server
+  // for as long as it existed while the real endpoint 500'd on a table that
+  // never existed — a fixture that invents the endpoint cannot fail when the
+  // endpoint is missing. Retired with the method (Scaffald/SaaS#658).
 
   describe('getPersonalizedBenefits', () => {
     it('should get personalized benefits messaging', async () => {
