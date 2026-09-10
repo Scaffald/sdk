@@ -91,11 +91,11 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "semantic-release": "^23.0.0",
-    "tsup": "^8.5.1",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
     "undici": ">=7.24.0",
-    "vitest": "^4.0.18"
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0",
