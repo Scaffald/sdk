@@ -154,24 +154,23 @@ export interface BulkArchiveResponse {
  */
 export class Inquiries extends Resource {
   /**
-   * List inquiries (sent or received)
+   * `list()` and `create()` used to be here, and are gone.
+   *
+   * Both called `/v1/inquiries`, which read `core.inquiries` — a table that
+   * does not exist and never has (Scaffald/SaaS#476). They described a generic
+   * person-to-person messaging feature that was never built: the list filtered
+   * on `sender_id`/`recipient_id` and the create sent `subject`/`message`/
+   * `inquiry_type`, none of which exist on the real `core.application_inquiries`.
+   *
+   * No hook or screen called either. Retired with the routes rather than given
+   * a table, so the SDK stops advertising a feature the product does not have.
    */
-  async list(params?: ListInquiriesParams): Promise<InquiriesListResponse> {
-    return super.get<InquiriesListResponse>('/v1/inquiries', params)
-  }
 
   /**
    * Get inquiry by ID
    */
   async getById(id: string): Promise<InquiryResponse> {
     return super.get<InquiryResponse>(`/v1/inquiries/${id}`)
-  }
-
-  /**
-   * Create a new inquiry
-   */
-  async create(params: CreateInquiryParams): Promise<InquiryResponse> {
-    return this.post<InquiryResponse>('/v1/inquiries', params)
   }
 
   /**
