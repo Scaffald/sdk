@@ -23,17 +23,26 @@ export interface Certification {
   issued_at?: string
 }
 
+export interface OrganizationIndustry {
+  id: string
+  slug: string
+  name: string
+}
+
+/**
+ * Public organization profile, as `GET /v1/profiles/organizations/{slug}`
+ * returns it. `industry` is the joined `core.industries` row, `address` is the
+ * free-text location; the API has no size or founding year (Scaffald/SaaS#482).
+ */
 export interface OrganizationProfile {
   id: string
   slug: string
   name: string
-  description?: string
-  logo_url?: string
-  website?: string
-  industry?: string
-  size?: string
-  location?: string
-  founded_year?: number
+  description: string | null
+  logo_url: string | null
+  website: string | null
+  address: string | null
+  industry: OrganizationIndustry | null
   created_at: string
   job_count: number
 }
@@ -149,7 +158,10 @@ export class Profiles extends Resource {
    * Get an organization profile by slug
    */
   async getOrganization(slug: string): Promise<OrganizationProfile> {
-    return this.get<OrganizationProfile>(`/v1/profiles/organizations/${slug}`)
+    const response = await this.get<{ data: OrganizationProfile }>(
+      `/v1/profiles/organizations/${slug}`
+    )
+    return response.data
   }
 
   // ===== Profile Management - General =====

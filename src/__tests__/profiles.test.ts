@@ -42,6 +42,8 @@ describe('Profiles Resource', () => {
       expect(org.slug).toBe('acme-corp')
       expect(org).toHaveProperty('name')
       expect(org).toHaveProperty('job_count')
+      expect(org.industry?.slug).toBe('construction')
+      expect(org.address).toBe('San Francisco, CA')
     })
 
     it('should return organization with logo', async () => {

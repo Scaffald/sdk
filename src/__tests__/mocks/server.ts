@@ -1372,18 +1372,18 @@ export const handlers = [
   http.get(`${BASE_URL}/v1/profiles/organizations/:slug`, ({ params }) => {
     const { slug } = params
     return HttpResponse.json({
-      id: 'org_1',
-      slug,
-      name: 'ACME Corporation',
-      description: 'Leading technology company',
-      logo_url: 'https://example.com/logo.png',
-      website: 'https://acme.com',
-      industry: 'Technology',
-      size: '1000-5000',
-      location: 'San Francisco, CA',
-      founded_year: 2010,
-      created_at: '2020-01-01T00:00:00Z',
-      job_count: 25,
+      data: {
+        id: 'org_1',
+        slug,
+        name: 'ACME Corporation',
+        description: 'Leading technology company',
+        logo_url: 'https://example.com/logo.png',
+        website: 'https://acme.com',
+        address: 'San Francisco, CA',
+        industry: { id: 'ind_1', slug: 'construction', name: 'Construction' },
+        created_at: '2020-01-01T00:00:00Z',
+        job_count: 25,
+      },
     })
   }),
 

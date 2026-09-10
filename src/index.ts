@@ -58,6 +58,7 @@ export type {
 
 export type {
   UserProfile,
+  OrganizationIndustry,
   OrganizationProfile,
   Certification,
   CurrentUser,
