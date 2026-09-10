@@ -23,17 +23,34 @@ export interface Certification {
   issued_at?: string
 }
 
+/**
+ * The organization profile as `GET /v1/profiles/organizations/{slug}` actually
+ * returns it, verified against a live response (Scaffald/SaaS#482).
+ *
+ * This interface previously described something the endpoint has never sent:
+ * `description` and `industry` as strings when both are objects, plus `size`,
+ * `location` and `founded_year`, which exist in no table in any schema. The
+ * msw handler in the tests hand-wrote that shape, so the suite asserted against
+ * a response the API cannot produce and stayed green throughout.
+ */
 export interface OrganizationProfile {
   id: string
   slug: string
   name: string
-  description?: string
-  logo_url?: string
-  website?: string
-  industry?: string
-  size?: string
-  location?: string
-  founded_year?: number
+  /** jsonb rich-text document, not a string. Null for most organizations. */
+  description: Record<string, unknown> | null
+  logo_url: string | null
+  website: string | null
+  /** Embedded through the `industry_id` FK, so the row rather than a name. */
+  industry: { id: string; name: string; slug: string } | null
+  /** jsonb. The real column behind what this type used to call `location`. */
+  address: {
+    street?: string
+    city?: string
+    state?: string
+    postal?: string
+    country?: string
+  } | null
   created_at: string
   job_count: number
 }
@@ -148,8 +165,18 @@ export class Profiles extends Resource {
   /**
    * Get an organization profile by slug
    */
-  async getOrganization(slug: string): Promise<OrganizationProfile> {
-    return this.get<OrganizationProfile>(`/v1/profiles/organizations/${slug}`)
+  /**
+   * Note the envelope. This route wraps its payload in `{ data }` and the http
+   * client returns the body verbatim, so the resolved value is
+   * `{ data: OrganizationProfile }` — it was declared bare, and the mock
+   * returned it bare, which is why nothing caught it. `getUser` has the same
+   * defect and `getProfileBySlug` does not wrap at all; that inconsistency is
+   * tracked separately.
+   */
+  async getOrganization(slug: string): Promise<{ data: OrganizationProfile }> {
+    return this.get<{ data: OrganizationProfile }>(
+      `/v1/profiles/organizations/${slug}`,
+    )
   }
 
   // ===== Profile Management - General =====
