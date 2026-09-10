@@ -47,19 +47,6 @@ export interface CompletionStatusPayload {
   updatedAt: string
 }
 
-export interface DismissNudgeParams {
-  nudgeId: string
-  reason?: string
-}
-
-export interface DismissNudgeResponse {
-  success: boolean
-  nudgeHistory: {
-    dismissed: Record<string, { dismissedAt: string; reason?: string }>
-    lastDismissedAt: string
-  }
-}
-
 export interface PersonalizedBenefit {
   id: string
   title: string
@@ -94,11 +81,10 @@ export class ProfileCompletion extends Resource {
   }
 
   /**
-   * Dismiss a profile completion nudge
+   * `dismissNudge()` used to be here. It posted to an endpoint that wrote to a
+   * table which has never existed, and no hook consumer ever rendered it.
+   * Retired with the route (Scaffald/SaaS#658).
    */
-  async dismissNudge(params: DismissNudgeParams): Promise<DismissNudgeResponse> {
-    return this.post<DismissNudgeResponse>('/v1/profiles/completion/nudges/dismiss', params)
-  }
 
   /**
    * Get personalized benefits messaging based on incomplete sections
