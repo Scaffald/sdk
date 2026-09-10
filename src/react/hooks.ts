@@ -492,15 +492,22 @@ export function useUserProfile(
  * @example
  * ```tsx
  * function OrganizationPage({ slug }: { slug: string }) {
- *   const { data: org } = useOrganizationProfile(slug)
+ *   const { data } = useOrganizationProfile(slug)
  *
- *   return <div>{org?.name}</div>
+ *   return <div>{data?.data.name}</div>
  * }
  * ```
+ *
+ * The route wraps its payload in `{ data }`, so the query's own `data` holds
+ * the envelope and the profile is one level down. Declared bare until
+ * Scaffald/SaaS#482.
  */
 export function useOrganizationProfile(
   slug: string,
-  options?: Omit<UseQueryOptions<OrganizationProfile>, 'queryKey' | 'queryFn'>
+  options?: Omit<
+    UseQueryOptions<{ data: OrganizationProfile }>,
+    'queryKey' | 'queryFn'
+  >
 ) {
   const client = useScaffald()
 

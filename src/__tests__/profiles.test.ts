@@ -35,19 +35,51 @@ describe('Profiles Resource', () => {
 
   describe('getOrganization', () => {
     it('should get an organization profile by slug', async () => {
-      const org = await client.profiles.getOrganization('acme-corp')
+      const { data: org } = await client.profiles.getOrganization('acme-corp')
 
       expect(org).toHaveProperty('id')
-      expect(org).toHaveProperty('slug')
       expect(org.slug).toBe('acme-corp')
       expect(org).toHaveProperty('name')
       expect(org).toHaveProperty('job_count')
     })
 
     it('should return organization with logo', async () => {
-      const org = await client.profiles.getOrganization('tech-company')
+      const { data: org } = await client.profiles.getOrganization('tech-company')
 
       expect(org.logo_url).toBeDefined()
+    })
+
+    // These four are the point of Scaffald/SaaS#482. The old assertions were
+    // all `toHaveProperty`, which passes against any shape at all, so the suite
+    // could not tell the declared contract from the one the API sends.
+    it('should return description as a rich-text document, not a string', async () => {
+      const { data: org } = await client.profiles.getOrganization('acme-corp')
+
+      expect(typeof org.description).toBe('object')
+      expect(org.description).toHaveProperty('type', 'doc')
+    })
+
+    it('should return industry as the embedded row, not a name', async () => {
+      const { data: org } = await client.profiles.getOrganization('acme-corp')
+
+      expect(org.industry).toMatchObject({ name: 'Technology', slug: 'technology' })
+      expect(org.industry?.id).toEqual(expect.any(String))
+    })
+
+    it('should return a structured address', async () => {
+      const { data: org } = await client.profiles.getOrganization('acme-corp')
+
+      expect(org.address).toMatchObject({ city: 'San Francisco', state: 'CA' })
+    })
+
+    it('should not carry size, location or founded_year', async () => {
+      const { data: org } = await client.profiles.getOrganization('acme-corp')
+
+      // No table in any schema has these columns; they were only ever in the
+      // type and the mock.
+      expect(org).not.toHaveProperty('size')
+      expect(org).not.toHaveProperty('location')
+      expect(org).not.toHaveProperty('founded_year')
     })
   })
 })

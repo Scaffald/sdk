@@ -304,8 +304,10 @@ describe('React Hooks', () => {
         await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
         expect(result.current.data).toBeDefined()
-        expect(result.current.data?.slug).toBe('acme-corp')
-        expect(result.current.data?.name).toBe('ACME Corporation')
+        // The route wraps in `{ data }`; the hook returns what the SDK method
+        // resolves to, so the profile is one level down (Scaffald/SaaS#482).
+        expect(result.current.data?.data.slug).toBe('acme-corp')
+        expect(result.current.data?.data.name).toBe('ACME Corporation')
       })
     })
   })
