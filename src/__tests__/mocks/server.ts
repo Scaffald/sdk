@@ -1369,21 +1369,36 @@ export const handlers = [
   }),
 
   // GET /v1/profiles/organizations/:slug - Get organization profile
+  //
+  // The public REST route wraps its body in `{ data }`, and the fields are the
+  // ones core.organizations actually has (Scaffald/SaaS#482 / #743): description
+  // and address are jsonb documents, industry is the embedded core.industries
+  // row via industry_id, and size / location / founded_year exist in no table.
+  // #26 rewrote the type, the method and the tests to this shape but not this
+  // handler, which left the suite red at 7 until the two agreed again.
   http.get(`${BASE_URL}/v1/profiles/organizations/:slug`, ({ params }) => {
     const { slug } = params
     return HttpResponse.json({
-      id: 'org_1',
-      slug,
-      name: 'ACME Corporation',
-      description: 'Leading technology company',
-      logo_url: 'https://example.com/logo.png',
-      website: 'https://acme.com',
-      industry: 'Technology',
-      size: '1000-5000',
-      location: 'San Francisco, CA',
-      founded_year: 2010,
-      created_at: '2020-01-01T00:00:00Z',
-      job_count: 25,
+      data: {
+        id: 'org_1',
+        slug,
+        name: 'ACME Corporation',
+        description: {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Leading technology company' }],
+            },
+          ],
+        },
+        logo_url: 'https://example.com/logo.png',
+        website: 'https://acme.com',
+        address: { city: 'San Francisco', state: 'CA', country: 'US' },
+        industry: { id: 'ind_1', name: 'Technology', slug: 'technology' },
+        created_at: '2020-01-01T00:00:00Z',
+        job_count: 25,
+      },
     })
   }),
 
