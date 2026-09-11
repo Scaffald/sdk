@@ -1341,30 +1341,37 @@ export const handlers = [
   }),
 
   // POST /v1/profiles/portfolio - Create portfolio item
-  // GET /v1/profiles/:username - Get user profile
+  // GET /v1/profiles/:username - Get user profile.
+  //
+  // Wrapped in `{ data }`, as the route is. It used to return the payload bare,
+  // matching the (wrong) declared type rather than the API — so the suite
+  // agreed with the type and neither was checked against the wire
+  // (Scaffald/SaaS#744).
   http.get(`${BASE_URL}/v1/profiles/:username`, ({ params }) => {
     const { username } = params
     return HttpResponse.json({
-      id: 'user_1',
-      username,
-      displayName: 'John Doe',
-      bio: 'Software engineer with 5 years of experience',
-      avatar_url: 'https://example.com/avatar.jpg',
-      location: 'San Francisco, CA',
-      website: 'https://johndoe.com',
-      linkedin_url: 'https://linkedin.com/in/johndoe',
-      github_url: 'https://github.com/johndoe',
-      years_experience: 5,
-      current_position: 'Senior Software Engineer',
-      skills: ['JavaScript', 'TypeScript', 'React', 'Node.js'],
-      certifications: [
-        {
-          name: 'AWS Certified Solutions Architect',
-          issuer: 'Amazon Web Services',
-          issued_at: '2023-01-01',
-        },
-      ],
-      created_at: '2020-01-01T00:00:00Z',
+      data: {
+        id: 'user_1',
+        username,
+        displayName: 'John Doe',
+        bio: 'Software engineer with 5 years of experience',
+        avatar_url: 'https://example.com/avatar.jpg',
+        location: 'San Francisco, CA',
+        website: 'https://johndoe.com',
+        linkedin_url: 'https://linkedin.com/in/johndoe',
+        github_url: 'https://github.com/johndoe',
+        years_experience: 5,
+        current_position: 'Senior Software Engineer',
+        skills: ['JavaScript', 'TypeScript', 'React', 'Node.js'],
+        certifications: [
+          {
+            name: 'AWS Certified Solutions Architect',
+            issuer: 'Amazon Web Services',
+            issued_at: '2023-01-01',
+          },
+        ],
+        created_at: '2020-01-01T00:00:00Z',
+      },
     })
   }),
 

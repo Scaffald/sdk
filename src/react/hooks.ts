@@ -465,15 +465,19 @@ export function useWithdrawApplication(
  * @example
  * ```tsx
  * function UserProfile({ username }: { username: string }) {
- *   const { data: profile } = useUserProfile(username)
+ *   const { data } = useUserProfile(username)
  *
- *   return <div>{profile?.displayName}</div>
+ *   return <div>{data?.data.displayName}</div>
  * }
  * ```
+ *
+ * The route wraps its payload in `{ data }`, so the query's own `data` holds
+ * the envelope and the profile is one level down. Declared bare until
+ * Scaffald/SaaS#744.
  */
 export function useUserProfile(
   username: string,
-  options?: Omit<UseQueryOptions<UserProfile>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<{ data: UserProfile }>, 'queryKey' | 'queryFn'>
 ) {
   const client = useScaffald()
 

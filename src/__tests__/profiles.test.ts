@@ -7,8 +7,11 @@ describe('Profiles Resource', () => {
   })
 
   describe('getUser', () => {
+    // The route wraps in `{ data }`, so the profile is one level down
+    // (Scaffald/SaaS#744). Destructured here so a future change back to a bare
+    // body fails loudly instead of silently yielding undefined.
     it('should get a user profile by username', async () => {
-      const profile = await client.profiles.getUser('johndoe')
+      const { data: profile } = await client.profiles.getUser('johndoe')
 
       expect(profile).toHaveProperty('id')
       expect(profile).toHaveProperty('username')
@@ -16,15 +19,22 @@ describe('Profiles Resource', () => {
       expect(profile).toHaveProperty('created_at')
     })
 
+    it('should return the payload under `data`, not at the top level', async () => {
+      const res = await client.profiles.getUser('johndoe')
+
+      expect(Object.keys(res)).toEqual(['data'])
+      expect(res).not.toHaveProperty('username')
+    })
+
     it('should return profile with skills', async () => {
-      const profile = await client.profiles.getUser('janedoe')
+      const { data: profile } = await client.profiles.getUser('janedoe')
 
       expect(profile.skills).toBeDefined()
       expect(Array.isArray(profile.skills)).toBe(true)
     })
 
     it('should return profile with certifications', async () => {
-      const profile = await client.profiles.getUser('johndoe')
+      const { data: profile } = await client.profiles.getUser('johndoe')
 
       if (profile.certifications) {
         expect(Array.isArray(profile.certifications)).toBe(true)
