@@ -156,10 +156,16 @@ export interface UploadAvatarResponse {
 
 export class Profiles extends Resource {
   /**
-   * Get a user profile by username
+   * Get a user profile by username.
+   *
+   * Note the envelope: this route wraps its payload in `{ data }` and the http
+   * client returns the body verbatim, so the resolved value is
+   * `{ data: UserProfile }`. It was declared bare, and the msw handler returned
+   * it bare, so neither the type checker nor the suite could see the
+   * disagreement (Scaffald/SaaS#744).
    */
-  async getUser(username: string): Promise<UserProfile> {
-    return this.get<UserProfile>(`/v1/profiles/${username}`)
+  async getUser(username: string): Promise<{ data: UserProfile }> {
+    return this.get<{ data: UserProfile }>(`/v1/profiles/${username}`)
   }
 
   /**

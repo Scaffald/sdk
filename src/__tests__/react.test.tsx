@@ -292,8 +292,10 @@ describe('React Hooks', () => {
         await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
         expect(result.current.data).toBeDefined()
-        expect(result.current.data?.username).toBe('johndoe')
-        expect(result.current.data?.displayName).toBe('John Doe')
+        // The route wraps in `{ data }`, so the profile is one level down
+        // (Scaffald/SaaS#744).
+        expect(result.current.data?.data.username).toBe('johndoe')
+        expect(result.current.data?.data.displayName).toBe('John Doe')
       })
     })
 
