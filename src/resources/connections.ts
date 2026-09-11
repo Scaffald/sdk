@@ -80,14 +80,28 @@ export class Connections extends Resource {
    * Send a connection request to another user
    */
   async send(params: SendConnectionRequestParams): Promise<Connection> {
-    return this.post<Connection>('/v1/connections/request', params)
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.post<{ data: Connection }>(
+      '/v1/connections/request',
+      params,
+    )
+    return res.data
   }
 
   /**
    * Accept a connection request
    */
   async accept(connectionId: string): Promise<Connection> {
-    return this.post<Connection>(`/v1/connections/${connectionId}/accept`, {})
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.post<{ data: Connection }>(
+      `/v1/connections/${connectionId}/accept`,
+      {},
+    )
+    return res.data
   }
 
   /**

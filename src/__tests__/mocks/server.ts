@@ -2420,16 +2420,19 @@ export const handlers = [
       return HttpResponse.json({ error: 'API key not found' }, { status: 404 })
     }
 
+    // Wrapped, as the route is: `return c.json({ data: maskedKey })` (#744).
     return HttpResponse.json({
-      id,
-      name: body.name || 'Updated API Key',
-      key_prefix: 'sk_live_abc123...',
-      scopes: body.scopes || ['read:jobs', 'write:jobs'],
-      rate_limit_tier: 'pro',
-      is_active: body.is_active !== undefined ? body.is_active : true,
-      last_used_at: '2025-01-10T10:00:00Z',
-      created_at: '2024-01-01T00:00:00Z',
-      expires_at: '2026-12-31T23:59:59Z',
+      data: {
+        id,
+        name: body.name || 'Updated API Key',
+        key_prefix: 'sk_live_abc123...',
+        scopes: body.scopes || ['read:jobs', 'write:jobs'],
+        rate_limit_tier: 'pro',
+        is_active: body.is_active !== undefined ? body.is_active : true,
+        last_used_at: '2025-01-10T10:00:00Z',
+        created_at: '2024-01-01T00:00:00Z',
+        expires_at: '2026-12-31T23:59:59Z',
+      },
     })
   }),
 
@@ -2460,36 +2463,39 @@ export const handlers = [
       return HttpResponse.json({ error: 'API key not found' }, { status: 404 })
     }
 
+    // Wrapped, as the route is: `return c.json({ data: { … } })` (#744).
     return HttpResponse.json({
-      total_requests: 1250,
-      success_requests: 1180,
-      error_requests: 70,
-      error_rate: '5.60',
-      avg_response_time_ms: 245,
-      period_days: Number.parseInt(days, 10),
-      usage: [
-        {
-          endpoint: '/v1/jobs',
-          method: 'GET',
-          status_code: 200,
-          response_time_ms: 150,
-          timestamp: '2025-01-12T10:00:00Z',
-        },
-        {
-          endpoint: '/v1/applications',
-          method: 'POST',
-          status_code: 201,
-          response_time_ms: 320,
-          timestamp: '2025-01-12T09:45:00Z',
-        },
-        {
-          endpoint: '/v1/jobs/123',
-          method: 'GET',
-          status_code: 404,
-          response_time_ms: 85,
-          timestamp: '2025-01-12T09:30:00Z',
-        },
-      ],
+      data: {
+        total_requests: 1250,
+        success_requests: 1180,
+        error_requests: 70,
+        error_rate: '5.60',
+        avg_response_time_ms: 245,
+        period_days: Number.parseInt(days, 10),
+        usage: [
+          {
+            endpoint: '/v1/jobs',
+            method: 'GET',
+            status_code: 200,
+            response_time_ms: 150,
+            timestamp: '2025-01-12T10:00:00Z',
+          },
+          {
+            endpoint: '/v1/applications',
+            method: 'POST',
+            status_code: 201,
+            response_time_ms: 320,
+            timestamp: '2025-01-12T09:45:00Z',
+          },
+          {
+            endpoint: '/v1/jobs/123',
+            method: 'GET',
+            status_code: 404,
+            response_time_ms: 85,
+            timestamp: '2025-01-12T09:30:00Z',
+          },
+        ],
+      },
     })
   }),
 
@@ -2830,7 +2836,8 @@ export const handlers = [
       response.event_metadata = sanitizedMetadata
     }
 
-    return HttpResponse.json(response, { status: 201 })
+    // Wrapped, as the route is: `return c.json({ data: event }, 201)` (#744).
+    return HttpResponse.json({ data: response }, { status: 201 })
   }),
 
   // GET /v1/engagement/activity - Get recent activity
@@ -3407,27 +3414,30 @@ export const handlers = [
     // Private profile - should succeed but just send request
     // (removing the error that was here before)
 
+    // Wrapped, as the route is: `return c.json({ data: connection }, 201)` (#744).
     return HttpResponse.json(
       {
-        id: 'conn_new_1',
-        requester_id: 'user_1',
-        addressee_id: body.targetUserId,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        requester: {
-          id: 'user_1',
-          first_name: 'Alice',
-          last_name: 'Johnson',
-          avatar_url: 'https://example.com/avatar1.jpg',
+      data: {
+          id: 'conn_new_1',
+          requester_id: 'user_1',
+          addressee_id: body.targetUserId,
+          status: 'pending',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          requester: {
+            id: 'user_1',
+            first_name: 'Alice',
+            last_name: 'Johnson',
+            avatar_url: 'https://example.com/avatar1.jpg',
+          },
+          addressee: {
+            id: body.targetUserId,
+            first_name: 'New',
+            last_name: 'User',
+            avatar_url: 'https://example.com/avatar_new.jpg',
+          },
         },
-        addressee: {
-          id: body.targetUserId,
-          first_name: 'New',
-          last_name: 'User',
-          avatar_url: 'https://example.com/avatar_new.jpg',
-        },
-      },
+    },
       { status: 201 }
     )
   }),
@@ -3470,24 +3480,27 @@ export const handlers = [
       return HttpResponse.json({ error: 'Cannot accept request you sent' }, { status: 403 })
     }
 
+    // Wrapped, as the route is: `return c.json({ data: updated })` (#744).
     return HttpResponse.json({
-      id: connectionId,
-      requester_id: 'user_2',
-      addressee_id: 'user_1',
-      status: 'accepted',
-      created_at: '2024-01-10T10:00:00Z',
-      updated_at: new Date().toISOString(),
-      requester: {
-        id: 'user_2',
-        first_name: 'Bob',
-        last_name: 'Smith',
-        avatar_url: 'https://example.com/avatar2.jpg',
-      },
-      addressee: {
-        id: 'user_1',
-        first_name: 'Alice',
-        last_name: 'Johnson',
-        avatar_url: 'https://example.com/avatar1.jpg',
+      data: {
+        id: connectionId,
+        requester_id: 'user_2',
+        addressee_id: 'user_1',
+        status: 'accepted',
+        created_at: '2024-01-10T10:00:00Z',
+        updated_at: new Date().toISOString(),
+        requester: {
+          id: 'user_2',
+          first_name: 'Bob',
+          last_name: 'Smith',
+          avatar_url: 'https://example.com/avatar2.jpg',
+        },
+        addressee: {
+          id: 'user_1',
+          first_name: 'Alice',
+          last_name: 'Johnson',
+          avatar_url: 'https://example.com/avatar1.jpg',
+        },
       },
     })
   }),
@@ -5226,21 +5239,24 @@ export const handlers = [
 
     // Handle duplicate follow - return existing follow
     if (body.targetUserId === 'user_duplicate') {
+      // The duplicate path returns a success body too, so it wraps as well.
       return HttpResponse.json({
-        id: 'follow_duplicate',
-        follower_id: 'user_1',
-        follower_type: 'user' as const,
-        followee_id: 'user_duplicate',
-        followee_type: 'user' as const,
-        created_at: '2024-01-01T00:00:00Z',
-        follower: {
-          id: 'user_1',
-          first_name: 'Alice',
-          last_name: 'Johnson',
-        },
-        followee: {
-          id: 'user_duplicate',
-          name: 'Duplicate User',
+        data: {
+          id: 'follow_duplicate',
+          follower_id: 'user_1',
+          follower_type: 'user' as const,
+          followee_id: 'user_duplicate',
+          followee_type: 'user' as const,
+          created_at: '2024-01-01T00:00:00Z',
+          follower: {
+            id: 'user_1',
+            first_name: 'Alice',
+            last_name: 'Johnson',
+          },
+          followee: {
+            id: 'user_duplicate',
+            name: 'Duplicate User',
+          },
         },
       })
     }
@@ -5265,7 +5281,8 @@ export const handlers = [
       },
     }
 
-    return HttpResponse.json(follow)
+    // Wrapped, as the route is: `return c.json({ data: follow }, 201)` (#744).
+    return HttpResponse.json({ data: follow })
   }),
 
   // DELETE /v1/follows/user/:userId - Unfollow a user

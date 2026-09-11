@@ -93,7 +93,11 @@ export class ApiKeys extends Resource {
    * ```
    */
   async update(id: string, params: UpdateApiKeyParams): Promise<ApiKey> {
-    return this.patch<ApiKey>(`/v1/api-keys/${id}`, params)
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.patch<{ data: ApiKey }>(`/v1/api-keys/${id}`, params)
+    return res.data
   }
 
   /**
@@ -140,6 +144,13 @@ export class ApiKeys extends Resource {
    * ```
    */
   async getUsage(id: string, params?: GetUsageParams): Promise<ApiKeyUsageStats> {
-    return this.get<ApiKeyUsageStats>(`/v1/api-keys/${id}/usage`, params)
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.get<{ data: ApiKeyUsageStats }>(
+      `/v1/api-keys/${id}/usage`,
+      params,
+    )
+    return res.data
   }
 }

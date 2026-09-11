@@ -148,15 +148,21 @@ export class PersonalityAssessments extends Resource {
    * Get assessment status or create new assessment
    * Returns current progress or creates a new assessment if none exists
    */
-  async getStatus(): Promise<{ data: AssessmentStatus }> {
-    return this.get<{ data: AssessmentStatus }>('/v1/personality-assessment/status')
+  // Bare, not `{ data }`. Verified against the running api: this route answers
+  // with the status object itself — `{ id, user_id, current_step,
+  // completion_score, started_at, … }`. The envelope declared here was never
+  // sent, so every consumer doing `status?.data` was reading undefined (#744).
+  async getStatus(): Promise<AssessmentStatus> {
+    return this.get<AssessmentStatus>('/v1/personality-assessment/status')
   }
 
   /**
    * Get IPIP assessment completion status
    */
-  async getIPIPStatus(): Promise<{ data: IPIPStatus }> {
-    return this.get<{ data: IPIPStatus }>('/v1/personality-assessment/ipip/status')
+  // Bare, for the same reason as getStatus above — the live route answers
+  // `{ isCompleted, completedAt, progress }`.
+  async getIPIPStatus(): Promise<IPIPStatus> {
+    return this.get<IPIPStatus>('/v1/personality-assessment/ipip/status')
   }
 
   /**
