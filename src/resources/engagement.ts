@@ -59,7 +59,14 @@ export class Engagement extends Resource {
    * Track an engagement event
    */
   async track(params: TrackEventParams): Promise<EngagementEvent> {
-    return this.post<EngagementEvent>('/v1/engagement/track', params)
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.post<{ data: EngagementEvent }>(
+      '/v1/engagement/track',
+      params,
+    )
+    return res.data
   }
 
   /**

@@ -79,7 +79,11 @@ export class Follows extends Resource {
    * Follow a user
    */
   async followUser(params: FollowUserParams): Promise<Follow> {
-    return this.post<Follow>('/v1/follows/user', params)
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.post<{ data: Follow }>('/v1/follows/user', params)
+    return res.data
   }
 
   /**
@@ -93,7 +97,11 @@ export class Follows extends Resource {
    * Save (follow) a job so it can be revisited later.
    */
   async followJob(jobId: string): Promise<Follow> {
-    return this.post<Follow>('/v1/follows/job', { jobId })
+    // The route wraps in `{ data }` and the http client returns the body
+    // verbatim, so unwrap here rather than widen the signature — every caller
+    // and the hook's own generic already expect the payload (#744).
+    const res = await this.post<{ data: Follow }>('/v1/follows/job', { jobId })
+    return res.data
   }
 
   /**
