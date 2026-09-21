@@ -916,6 +916,8 @@ export type {
   UpdateOfficeOrganizationParams,
 } from './resources/office-organizations.js'
 
+export type { GeographicSettings } from './resources/office-settings.js'
+
 export type {
   StorageTotals,
   StorageTopUser,
