@@ -58,6 +58,7 @@ import { Map } from './resources/map.js'
 import { Resume } from './resources/resume.js'
 import { OAuthManagement } from './resources/oauth-management.js'
 import { OfficeOrganizations } from './resources/office-organizations.js'
+import { OfficeSettings } from './resources/office-settings.js'
 import { OfficeStorage } from './resources/office-storage.js'
 import { ProfileWizard } from './resources/profile-wizard.js'
 import { CCPA } from './resources/ccpa.js'
@@ -133,6 +134,7 @@ export class Scaffald {
   public readonly resume: Resume
   public readonly oauthManagement: OAuthManagement
   public readonly officeOrganizations: OfficeOrganizations
+  public readonly officeSettings: OfficeSettings
   public readonly officeStorage: OfficeStorage
   public readonly profileWizard: ProfileWizard
   public readonly ccpa: CCPA
@@ -216,6 +218,7 @@ export class Scaffald {
     this.resume = new Resume(this.http)
     this.oauthManagement = new OAuthManagement(this.http)
     this.officeOrganizations = new OfficeOrganizations(this.http)
+    this.officeSettings = new OfficeSettings(this.http)
     this.officeStorage = new OfficeStorage(this.http)
     this.profileWizard = new ProfileWizard(this.http)
     this.ccpa = new CCPA(this.http)
