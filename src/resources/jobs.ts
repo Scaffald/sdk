@@ -65,6 +65,15 @@ export interface JobListParams {
   limit?: number
   offset?: number
   search?: string
+  /**
+   * Only this organization's postings.
+   *
+   * `GET /v1/jobs` has accepted `organizationId` since the public listing
+   * was built, and the handler filters on it; the parameter was simply
+   * missing from this type, so a caller wanting one employer's open roles
+   * had to fetch every published job and filter client-side.
+   */
+  organizationId?: string
 }
 
 export interface JobListResponse {

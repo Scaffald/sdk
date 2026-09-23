@@ -28,6 +28,17 @@ describe('Jobs Resource', () => {
       expect(response.data).toBeDefined()
       expect(response.limit).toBe(20) // Mock returns 20
     })
+
+    it('accepts an organization filter', async () => {
+      // `GET /v1/jobs` has always filtered on `organizationId`; the type
+      // just did not say so, which is what this asserts.
+      const response = await client.jobs.list({
+        status: 'published',
+        organizationId: '00000000-0000-0000-0000-0000000000aa',
+      })
+
+      expect(response.data).toBeDefined()
+    })
   })
 
   describe('retrieve', () => {
