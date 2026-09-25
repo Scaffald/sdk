@@ -56,6 +56,8 @@ export interface Application {
   attachment_metadata?: Record<string, unknown>
   completed_steps?: string[]
   created_at: string
+  /** Null while the application is an auto-saved draft. */
+  submitted_at?: string | null
   stage_changed_at?: string | null
   score?: number | null
   job?: ApplicationJobSummary | null
@@ -216,6 +218,7 @@ export interface EmployerApplication {
   user_id: string
   status: Application['status']
   created_at: string
+  submitted_at: string | null
   updated_at: string | null
   stage_changed_at: string | null
   score_total: number | null
