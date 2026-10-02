@@ -448,8 +448,6 @@ export type {
   SavePaymentMethodParams,
   TransactionReceipt,
   AccountCredits,
-  DepositCreditsParams,
-  DepositCreditsResponse,
   CreditLedgerEntry,
   CreditLedgerResponse,
 } from './types/payments.js'
