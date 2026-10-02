@@ -120,19 +120,6 @@ export interface AccountCredits {
   updatedAt: string
 }
 
-export interface DepositCreditsParams {
-  organizationId: string
-  amountCents: number
-  paymentMethodId?: string
-}
-
-export interface DepositCreditsResponse {
-  transactionId: string
-  status: string
-  clientSecret: string | null
-  stripePaymentIntentId: string
-}
-
 export interface CreditLedgerEntry {
   id: string
   accountCreditId: string

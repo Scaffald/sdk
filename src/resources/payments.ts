@@ -9,8 +9,6 @@ import type {
   SavePaymentMethodParams,
   TransactionReceipt,
   AccountCredits,
-  DepositCreditsParams,
-  DepositCreditsResponse,
   CreditLedgerResponse,
 } from '../types/payments.js'
 
@@ -31,7 +29,9 @@ export class Payments extends Resource {
     return this.get<TransactionsListResponse>('/v1/payments/transactions', query)
   }
 
-  async exportTransactions(params?: TransactionsListParams & { format?: 'csv' | 'json' }): Promise<TransactionExportResponse> {
+  async exportTransactions(
+    params?: TransactionsListParams & { format?: 'csv' | 'json' }
+  ): Promise<TransactionExportResponse> {
     const query: Record<string, string> = {}
     if (params?.format) query.format = params.format
     if (params?.organizationId) query.organizationId = params.organizationId
@@ -66,11 +66,12 @@ export class Payments extends Resource {
     return this.get<AccountCredits>('/v1/payments/credits', { organizationId })
   }
 
-  async depositCredits(params: DepositCreditsParams): Promise<DepositCreditsResponse> {
-    return this.post<DepositCreditsResponse>('/v1/payments/credits/deposit', params)
-  }
-
-  async getCreditLedger(params: { organizationId: string; limit?: number; offset?: number; transactionType?: string }): Promise<CreditLedgerResponse> {
+  async getCreditLedger(params: {
+    organizationId: string
+    limit?: number
+    offset?: number
+    transactionType?: string
+  }): Promise<CreditLedgerResponse> {
     const query: Record<string, string> = { organizationId: params.organizationId }
     if (params.limit) query.limit = String(params.limit)
     if (params.offset) query.offset = String(params.offset)
