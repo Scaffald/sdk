@@ -2349,7 +2349,10 @@ export const handlers = [
 
   // GET /v1/api-keys - List all API keys
   http.get(`${BASE_URL}/v1/api-keys`, () => {
-    return HttpResponse.json([
+    // Wrapped, as the route is: `return c.json({ data: keysWithMaskedPrefix })`.
+    // This mock returned a bare array, so the unit tests passed while the real
+    // screen crashed on `.map` (#1015).
+    return HttpResponse.json({ data: [
       {
         id: 'key_1',
         name: 'Production API Key',
@@ -2383,7 +2386,7 @@ export const handlers = [
         created_at: '2024-01-01T00:00:00Z',
         expires_at: null,
       },
-    ])
+    ] })
   }),
 
   // POST /v1/api-keys - Create a new API key
@@ -2395,16 +2398,20 @@ export const handlers = [
       return HttpResponse.json({ error: 'At least one scope is required' }, { status: 400 })
     }
 
+    // Wrapped, as the route is: `{ data: { ...key, key }, warning }` (#1015).
     return HttpResponse.json(
       {
-        id: 'key_new_123',
-        name: body.name,
-        key: 'sk_live_full_key_secret_abc123xyz789', // Full key only shown once
-        key_prefix: 'sk_live_abc123...',
-        scopes: body.scopes || [],
-        rate_limit_tier: body.rate_limit_tier || 'free',
-        created_at: new Date().toISOString(),
-        expires_at: body.expires_at || null,
+        data: {
+          id: 'key_new_123',
+          name: body.name,
+          key: 'sk_live_full_key_secret_abc123xyz789', // Full key only shown once
+          key_prefix: 'sk_live_abc123...',
+          scopes: body.scopes || [],
+          rate_limit_tier: body.rate_limit_tier || 'free',
+          created_at: new Date().toISOString(),
+          expires_at: body.expires_at || null,
+        },
+        warning: 'Save this API key now. It will not be shown again.',
       },
       { status: 201 }
     )
@@ -2436,8 +2443,9 @@ export const handlers = [
     })
   }),
 
-  // POST /v1/api-keys/:id/revoke - Revoke an API key
-  http.post(`${BASE_URL}/v1/api-keys/:id/revoke`, ({ params }) => {
+  // DELETE /v1/api-keys/:id - Revoke (soft delete) an API key. There is no
+  // POST /:id/revoke route; this mock used to invent one (#1015).
+  http.delete(`${BASE_URL}/v1/api-keys/:id`, ({ params }) => {
     const { id } = params
 
     // Check for invalid key ID
@@ -2445,10 +2453,13 @@ export const handlers = [
       return HttpResponse.json({ error: 'API key not found' }, { status: 404 })
     }
 
+    // Wrapped, as the route is: `{ data: { id, name, message } }` (#1015).
     return HttpResponse.json({
-      id,
-      name: 'Production API Key',
-      message: 'API key revoked successfully',
+      data: {
+        id,
+        name: 'Production API Key',
+        message: 'API key revoked successfully',
+      },
     })
   }),
 

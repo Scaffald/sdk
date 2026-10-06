@@ -58,11 +58,19 @@ describeIfIntegration('Integration: Per-endpoint smoke', () => {
     expect(Array.isArray(result.roles)).toBe(true)
   })
 
-  it('apiKeys.list() returns 2xx (authenticated)', async () => {
-    const result = await client.apiKeys.list()
-    expect(result).toBeDefined()
-    const list = Array.isArray(result) ? result : (result as { data?: unknown[] }).data
-    expect(Array.isArray(list)).toBe(true)
+  it('apiKeys.list() returns an array, or a 403 for a user with no organization', async () => {
+    // Strict on purpose. This used to accept either an array or `{ data }`,
+    // which let list() return the wrapped body for months while /office/api-keys
+    // crashed on `.map` (#1015). The default integration user belongs to no
+    // organization, and the route refuses those with 403 — that is the contract
+    // this smoke can check; api-keys.integration.test.ts covers the happy path.
+    try {
+      const result = await client.apiKeys.list()
+      expect(Array.isArray(result)).toBe(true)
+    } catch (err) {
+      expect((err as Error).name).toBe('PermissionError')
+      expect((err as Error).message).toMatch(/organization/i)
+    }
   })
 
   it('connections.list() returns 2xx (authenticated)', async () => {
