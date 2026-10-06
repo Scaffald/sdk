@@ -34,7 +34,11 @@ export class ApiKeys extends Resource {
    * ```
    */
   async list(): Promise<ApiKey[]> {
-    return this.get<ApiKey[]>('/v1/api-keys')
+    // The route wraps in `{ data }` (api-keys.ts `GET /`) and the http client
+    // returns the body verbatim. Returning the body made `list()` hand callers
+    // an object typed as an array, and /office/api-keys crashed on `.map` (#1015).
+    const res = await this.get<{ data: ApiKey[] }>('/v1/api-keys')
+    return res.data
   }
 
   /**
@@ -64,7 +68,9 @@ export class ApiKeys extends Resource {
    * ```
    */
   async create(params: CreateApiKeyParams): Promise<ApiKeyCreated> {
-    return this.post<ApiKeyCreated>('/v1/api-keys', params)
+    // Wrapped as `{ data, warning }`; `data` carries the one-time full `key` (#1015).
+    const res = await this.post<{ data: ApiKeyCreated; warning?: string }>('/v1/api-keys', params)
+    return res.data
   }
 
   /**
@@ -118,7 +124,10 @@ export class ApiKeys extends Resource {
    * ```
    */
   async revoke(id: string): Promise<RevokeApiKeyResponse> {
-    return this.post<RevokeApiKeyResponse>(`/v1/api-keys/${id}/revoke`, {})
+    // The api has no `POST /:id/revoke`; revocation is `DELETE /:id`, a soft
+    // delete (is_active = false), wrapped in `{ data }` (#1015).
+    const res = await this.del<{ data: RevokeApiKeyResponse }>(`/v1/api-keys/${id}`)
+    return res.data
   }
 
   /**
