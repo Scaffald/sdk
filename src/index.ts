@@ -430,6 +430,7 @@ export type {
 
 export type {
   StripeSettings,
+  StripePublicConfig,
   UpdatePublishableKeyParams,
   UpdateTestModeParams,
   UpdateStripeApiKeyParams,
