@@ -13,6 +13,16 @@ export interface StripeSettings {
   updatedBy: string | null
 }
 
+/**
+ * What a paying user's card form needs (GET /v1/stripe-config, Scaffald/SaaS#1258).
+ * Any signed-in user may read it; the full settings stay office-only.
+ */
+export interface StripePublicConfig {
+  /** null when no publishable key is configured. */
+  publishableKey: string | null
+  testMode: boolean
+}
+
 export interface UpdatePublishableKeyParams {
   publishableKey: string
 }
@@ -33,6 +43,11 @@ export interface UpdateWebhookSecretParams {
 export class StripeSettings extends Resource {
   async getSettings(): Promise<StripeSettings> {
     return this.get<StripeSettings>('/v1/stripe-settings')
+  }
+
+  /** Publishable key and mode for Stripe.js — readable by any signed-in user. */
+  async getPublicConfig(): Promise<StripePublicConfig> {
+    return this.get<StripePublicConfig>('/v1/stripe-config')
   }
 
   async updatePublishableKey(

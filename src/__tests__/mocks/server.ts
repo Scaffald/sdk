@@ -7535,6 +7535,11 @@ export const handlers = [
     })
   }),
 
+  // GET /v1/stripe-config - publishable key for any signed-in payer
+  http.get(`${BASE_URL}/v1/stripe-config`, () =>
+    HttpResponse.json({ publishableKey: 'pk_test_mock', testMode: true })
+  ),
+
   // Profile Views handlers (imported from dedicated file)
   ...profileViewsHandlers,
 ]
