@@ -2352,41 +2352,43 @@ export const handlers = [
     // Wrapped, as the route is: `return c.json({ data: keysWithMaskedPrefix })`.
     // This mock returned a bare array, so the unit tests passed while the real
     // screen crashed on `.map` (#1015).
-    return HttpResponse.json({ data: [
-      {
-        id: 'key_1',
-        name: 'Production API Key',
-        key_prefix: 'sk_live_abc123...',
-        scopes: ['read:jobs', 'write:applications'],
-        rate_limit_tier: 'pro',
-        is_active: true,
-        last_used_at: '2025-01-10T10:00:00Z',
-        created_at: '2024-01-01T00:00:00Z',
-        expires_at: '2026-12-31T23:59:59Z',
-      },
-      {
-        id: 'key_2',
-        name: 'Test API Key',
-        key_prefix: 'sk_test_xyz789...',
-        scopes: ['read:jobs', 'read:applications'],
-        rate_limit_tier: 'free',
-        is_active: true,
-        last_used_at: null,
-        created_at: '2024-06-15T00:00:00Z',
-        expires_at: null,
-      },
-      {
-        id: 'key_3',
-        name: 'Revoked Key',
-        key_prefix: 'sk_live_old456...',
-        scopes: ['read:jobs'],
-        rate_limit_tier: 'free',
-        is_active: false,
-        last_used_at: '2024-12-01T00:00:00Z',
-        created_at: '2024-01-01T00:00:00Z',
-        expires_at: null,
-      },
-    ] })
+    return HttpResponse.json({
+      data: [
+        {
+          id: 'key_1',
+          name: 'Production API Key',
+          key_prefix: 'sk_live_abc123...',
+          scopes: ['read:jobs', 'write:applications'],
+          rate_limit_tier: 'pro',
+          is_active: true,
+          last_used_at: '2025-01-10T10:00:00Z',
+          created_at: '2024-01-01T00:00:00Z',
+          expires_at: '2026-12-31T23:59:59Z',
+        },
+        {
+          id: 'key_2',
+          name: 'Test API Key',
+          key_prefix: 'sk_test_xyz789...',
+          scopes: ['read:jobs', 'read:applications'],
+          rate_limit_tier: 'free',
+          is_active: true,
+          last_used_at: null,
+          created_at: '2024-06-15T00:00:00Z',
+          expires_at: null,
+        },
+        {
+          id: 'key_3',
+          name: 'Revoked Key',
+          key_prefix: 'sk_live_old456...',
+          scopes: ['read:jobs'],
+          rate_limit_tier: 'free',
+          is_active: false,
+          last_used_at: '2024-12-01T00:00:00Z',
+          created_at: '2024-01-01T00:00:00Z',
+          expires_at: null,
+        },
+      ],
+    })
   }),
 
   // POST /v1/api-keys - Create a new API key
@@ -3428,7 +3430,7 @@ export const handlers = [
     // Wrapped, as the route is: `return c.json({ data: connection }, 201)` (#744).
     return HttpResponse.json(
       {
-      data: {
+        data: {
           id: 'conn_new_1',
           requester_id: 'user_1',
           addressee_id: body.targetUserId,
@@ -3448,7 +3450,7 @@ export const handlers = [
             avatar_url: 'https://example.com/avatar_new.jpg',
           },
         },
-    },
+      },
       { status: 201 }
     )
   }),
@@ -7539,6 +7541,50 @@ export const handlers = [
   http.get(`${BASE_URL}/v1/stripe-config`, () =>
     HttpResponse.json({ publishableKey: 'pk_test_mock', testMode: true })
   ),
+
+  // Account deletion (Scaffald/SaaS#1313). Bare bodies, as the route sends.
+  http.get(`${BASE_URL}/v1/account-deletion/status`, () =>
+    HttpResponse.json({
+      request: {
+        id: 'del_1',
+        status: 'pending',
+        createdAt: '2026-10-18T00:00:00.000Z',
+        requestedAt: '2026-10-18T00:00:00.000Z',
+        scheduledFor: '2026-11-01T00:00:00.000Z',
+        canCancel: true,
+      },
+    })
+  ),
+  http.post(`${BASE_URL}/v1/account-deletion/cancel`, () =>
+    HttpResponse.json({
+      id: 'del_1',
+      status: 'cancelled',
+      cancelledAt: '2026-10-19T00:00:00.000Z',
+    })
+  ),
+  http.get(`${BASE_URL}/v1/office/account-deletions`, ({ request }) => {
+    const filter = new URL(request.url).searchParams.get('filter') ?? 'attention'
+    return HttpResponse.json({
+      requests: [
+        {
+          id: 'del_2',
+          deletionType: 'worker',
+          deletedUserId: 'user_2',
+          deletedOrganizationId: null,
+          status: filter === 'all' ? 'completed' : 'failed',
+          requestedAt: '2026-10-01T00:00:00.000Z',
+          scheduledFor: '2026-10-15T00:00:00.000Z',
+          attempts: 1,
+          lastAttemptAt: '2026-10-15T06:15:00.000Z',
+          completedAt: null,
+          cancelledAt: null,
+          errorMessage: 'blockers: owns content that must be reassigned first: core.tasks (1)',
+          overdue: false,
+          needsManualHandling: false,
+        },
+      ],
+    })
+  }),
 
   // Profile Views handlers (imported from dedicated file)
   ...profileViewsHandlers,

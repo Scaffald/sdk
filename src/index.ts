@@ -392,6 +392,10 @@ export type {
   RequestDeletionResponse,
   RequestWorkerDeletionParams,
   RequestOrganizationDeletionParams,
+  DeletionStatusResponse,
+  CancelDeletionResponse,
+  OfficeAccountDeletion,
+  ListOfficeAccountDeletionsParams,
 } from './resources/account-deletion.js'
 
 export type {
