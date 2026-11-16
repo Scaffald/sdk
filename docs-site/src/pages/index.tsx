@@ -2,7 +2,8 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import { HomepageHeader, Feature } from '@scaffald/docs-shared';
+import { Feature } from '../components/homepage/Feature';
+import { HomepageHeader } from '../components/homepage/HomepageHeader';
 import styles from './index.module.css';
 
 export default function Home(): React.ReactElement {
