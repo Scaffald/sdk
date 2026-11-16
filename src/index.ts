@@ -30,6 +30,8 @@ export type {
   OfficeListJobsResponse,
   OfficeCreateJobParams,
   OfficeUpdateJobParams,
+  OfficeJobDetailParams,
+  OfficeJobDetail,
 } from './resources/jobs.js'
 
 export type {
@@ -690,6 +692,7 @@ export type {
 export type {
   OfficeUser,
   OfficeListUsersResponse,
+  OfficeListUsersParams,
   OfficeUpdateUserParams,
   OfficeUserGeneral,
   OfficeUpdateUserGeneralParams,

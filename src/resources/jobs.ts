@@ -99,7 +99,110 @@ export interface CreateJobParams {
 }
 
 /** Params for office (admin) job creation */
-export interface OfficeCreateJobParams {
+/**
+ * The office job form's fields beyond the basics (Scaffald/SaaS#1342). On an
+ * update, `null` clears a field and an omitted field is left as it is.
+ */
+export interface OfficeJobDetailParams {
+  address?: {
+    street?: string
+    city?: string
+    state?: string
+    zip?: string
+    country?: string
+    latitude?: number
+    longitude?: number
+  } | null
+  hiring_manager_id?: string | null
+  recruiter_id?: string | null
+  require_current_location?: boolean | null
+  require_relocation_willingness?: boolean | null
+  minimum_years_experience?: number | null
+  require_work_authorization?: boolean | null
+  require_earliest_start_date?: boolean | null
+  enable_auto_reject?: boolean | null
+  auto_reject_criteria?: {
+    score_minimum?: number
+    require_work_authorization?: boolean
+    require_all_skills?: boolean
+    require_all_certifications?: boolean
+  } | null
+  minimum_score?: number | null
+  internal_job_code?: string | null
+  department?: string | null
+  cost_center?: string | null
+  number_of_openings?: number | null
+  priority_level?: 'urgent' | 'high' | 'normal' | 'low' | null
+  requisition_number?: string | null
+  job_category?: string | null
+  is_confidential?: boolean | null
+  /** ISO date-time */
+  application_deadline?: string | null
+  /** YYYY-MM-DD */
+  target_start_date?: string | null
+  /** YYYY-MM-DD */
+  estimated_hire_date?: string | null
+  /** ISO date-time */
+  scheduled_publish_at?: string | null
+  minimum_education_level?: 'none' | 'high_school' | 'associate' | 'bachelor' | 'master' | 'phd' | null
+  require_background_check?: boolean | null
+  background_check_type?: string | null
+  require_drug_test?: boolean | null
+  require_drivers_license?: boolean | null
+  drivers_license_type?: string | null
+  security_clearance_required?: string | null
+  travel_percentage?: number | null
+  shift_requirements?: string | null
+  benefits_summary?: string | null
+  has_bonus_structure?: boolean | null
+  bonus_details?: string | null
+  has_equity?: boolean | null
+  equity_details?: string | null
+  sign_on_bonus_cents?: number | null
+  has_relocation_package?: boolean | null
+  relocation_package_details?: string | null
+  overtime_eligible?: boolean | null
+  pay_frequency?: 'hourly' | 'weekly' | 'biweekly' | 'semimonthly' | 'monthly' | null
+  requires_assessment?: boolean | null
+  assessment_details?: string | null
+  requires_video_interview?: boolean | null
+  estimated_application_time_minutes?: number | null
+  application_expiry_days?: number | null
+  inquiry_capability_questions?: Array<{
+    name: string
+    label: string
+    type: 'boolean' | 'number' | 'text'
+    unit?: string
+    required: boolean
+  }> | null
+  relocation_assistance_offered?: boolean | null
+  relocation_assistance_details?: string | null
+  work_schedule_details?: string | null
+  timezone?: string | null
+  is_featured?: boolean | null
+  /** ISO date-time */
+  featured_until?: string | null
+  seo_keywords?: string[] | null
+  external_application_url?: string | null
+  eeo_job_category?: string | null
+  is_veteran_friendly?: boolean | null
+  is_disability_friendly?: boolean | null
+  affirmative_action_plan?: boolean | null
+  source_tracking_enabled?: boolean | null
+  required_soft_skills?: Array<{ skill_id: string; importance: number }> | null
+
+  /** CSI MasterFormat ids, saved as required skills. Omit to leave unchanged. */
+  skill_ids?: string[]
+  /** CSI MasterFormat ids, saved as optional skills. */
+  optional_skill_ids?: string[]
+  /** Certification catalog ids. */
+  certification_ids?: string[]
+  /** Teams in the job's organization. */
+  team_ids?: string[]
+  primary_team_id?: string | null
+}
+
+export interface OfficeCreateJobParams extends OfficeJobDetailParams {
   organization_id: string
   title: string
   description: string
@@ -114,19 +217,28 @@ export interface OfficeCreateJobParams {
 }
 
 /** Params for office (admin) job update */
-export interface OfficeUpdateJobParams {
+export interface OfficeUpdateJobParams extends OfficeJobDetailParams {
   title?: string
   description?: string
   status?: 'draft' | 'open' | 'paused' | 'closed'
-  employment_type?: 'full_time' | 'part_time' | 'contract' | 'temp' | 'intern'
-  remote_option?: 'on_site' | 'hybrid' | 'remote'
-  position_level?: string
-  location?: string
-  pay_range_min_cents?: number
-  pay_range_max_cents?: number
-  pay_range_type?: 'hourly' | 'salary' | 'contract' | 'project'
+  employment_type?: 'full_time' | 'part_time' | 'contract' | 'temp' | 'intern' | null
+  remote_option?: 'on_site' | 'hybrid' | 'remote' | null
+  position_level?: string | null
+  location?: string | null
+  pay_range_min_cents?: number | null
+  pay_range_max_cents?: number | null
+  pay_range_type?: 'hourly' | 'salary' | 'contract' | 'project' | null
   organization_id?: string
 }
+
+/** GET /v1/office/jobs/:id — the whole job, for the office edit form. */
+export type OfficeJobDetail = Job &
+  Omit<OfficeJobDetailParams, 'skill_ids' | 'optional_skill_ids' | 'certification_ids'> & {
+    skills: Array<{ id: string; name: string; code: string | null; is_required: boolean }>
+    certifications: Array<{ id: string; name: string }>
+    team_ids: string[]
+    primary_team_id: string | null
+  }
 
 /** API response shape for single job */
 interface JobApiResponse {
@@ -299,6 +411,12 @@ export class Jobs extends Resource {
       params as Record<string, unknown>
     )
     return res.data ?? { jobs: [], total: 0 }
+  }
+
+  /** The whole job for the office edit form, with named skills and certificates. */
+  async officeGetJob(id: string): Promise<OfficeJobDetail> {
+    const res = await this.get<{ data: { job: OfficeJobDetail } }>(`/v1/office/jobs/${id}`)
+    return res.data.job
   }
 
   async officeCreateJob(params: OfficeCreateJobParams): Promise<Job> {
