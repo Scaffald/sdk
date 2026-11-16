@@ -94,9 +94,25 @@ export interface OfficeUpdateUserEmploymentParams {
   hourly_rate?: number | null
 }
 
+export interface OfficeListUsersParams {
+  /** Username, display name, first or last name, or "First Last". */
+  search?: string
+  /** 1–50, default 50. */
+  limit?: number
+  /** Only these users (up to 50), e.g. to name a saved hiring manager. */
+  ids?: string[]
+}
+
 export class OfficeUsers extends Resource {
-  async list(): Promise<OfficeListUsersResponse> {
-    return this.get<OfficeListUsersResponse>('/v1/office/users')
+  async list(params?: OfficeListUsersParams): Promise<OfficeListUsersResponse> {
+    const query = params
+      ? {
+          search: params.search,
+          limit: params.limit,
+          ids: params.ids?.length ? params.ids.join(',') : undefined,
+        }
+      : undefined
+    return this.get<OfficeListUsersResponse>('/v1/office/users', query)
   }
 
   async delete(id: string): Promise<{ success: boolean }> {
