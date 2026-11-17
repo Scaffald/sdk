@@ -7,7 +7,6 @@ export interface RequestOptions {
   query?: Record<string, any>
   body?: any
   headers?: Record<string, string>
-  idempotencyKey?: string
 }
 
 export interface RateLimitInfo {
@@ -31,7 +30,7 @@ export class HttpClient {
   }
 
   async request<T = any>(options: RequestOptions, attempt = 0): Promise<T> {
-    const { method, path, query, body, headers = {}, idempotencyKey } = options
+    const { method, path, query, body, headers = {} } = options
     // Combine baseUrl with path - new URL(path, base) drops base's path when path is absolute
     const base = this.config.baseUrl.replace(/\/$/, '')
     const pathSegment = path.startsWith('/') ? path : `/${path}`
@@ -72,9 +71,10 @@ export class HttpClient {
       requestHeaders['apikey'] = this.config.anonKey
     }
 
-    if (method === 'POST' && idempotencyKey) {
-      requestHeaders['Idempotency-Key'] = idempotencyKey
-    }
+    // Every header above is on the CORS allow-list of Supabase's gateway
+    // (authorization, x-client-info, apikey, content-type). Do not add one
+    // that is not — an Idempotency-Key here made every browser POST to
+    // /v1/applications fail its preflight (Scaffald/SaaS#1353).
 
     try {
       const controller = new AbortController()
@@ -101,7 +101,7 @@ export class HttpClient {
       const errorBody = await response.json().catch(() => ({}))
       const error = createErrorFromResponse(response.status, errorBody, requestId)
 
-      if (this.shouldRetry(method, response.status, attempt, idempotencyKey)) {
+      if (this.shouldRetry(method, response.status, attempt)) {
         const delay = this.getRetryDelay(response, attempt)
         await sleep(delay)
         return this.request(options, attempt + 1)
@@ -141,17 +141,10 @@ export class HttpClient {
     }
   }
 
-  private shouldRetry(
-    method: string,
-    statusCode: number,
-    attempt: number,
-    idempotencyKey?: string
-  ): boolean {
+  private shouldRetry(method: string, statusCode: number, attempt: number): boolean {
     if (attempt >= this.config.maxRetries) return false
-    // SC-106: POST is non-idempotent by default, but if the caller provided an
-    // Idempotency-Key the server will dedupe — so retrying is safe and unblocks
-    // the same transient 5xx/429 backoff that other verbs already get.
-    if (method === 'POST' && !idempotencyKey) return false
+    // POST is not idempotent and the api has no dedupe key, so never retry it.
+    if (method === 'POST') return false
     return [408, 429, 500, 502, 503, 504].includes(statusCode)
   }
 
@@ -172,13 +165,8 @@ export class HttpClient {
     return this.request<T>({ method: 'GET', path, query, headers })
   }
 
-  async post<T = any>(
-    path: string,
-    body?: any,
-    headers?: Record<string, string>,
-    idempotencyKey?: string
-  ): Promise<T> {
-    return this.request<T>({ method: 'POST', path, body, headers, idempotencyKey })
+  async post<T = any>(path: string, body?: any, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>({ method: 'POST', path, body, headers })
   }
 
   async put<T = any>(path: string, body?: any, headers?: Record<string, string>): Promise<T> {

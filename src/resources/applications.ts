@@ -1,20 +1,6 @@
 import { NotFoundError } from '../http/errors.js'
 import { Resource } from './base.js'
 
-/**
- * Generate a per-call Idempotency-Key. The value only needs to be stable
- * across the SDK's internal retries of a single logical request (which
- * `HttpClient.request` does by threading the same `options` through the
- * recursive call); a fresh UUID per `create()` invocation is sufficient.
- */
-function generateIdempotencyKey(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID()
-  }
-  // Fallback for environments without crypto.randomUUID (very old Node).
-  return `idem-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-}
-
 export interface ApplicationJobSummary {
   id: string
   title: string | null
@@ -289,16 +275,13 @@ export class Applications extends Resource {
   /**
    * Create a new job application.
    *
-   * SC-109: always attaches a per-call Idempotency-Key so SDK-internal retries
-   * (enabled in SC-106 for POSTs that carry a key) dedupe at the server
-   * instead of double-creating an application row on a transient 5xx.
+   * No Idempotency-Key header: the api never read it, and it is not on the
+   * CORS allow-list of Supabase's gateway, so a browser's preflight failed and
+   * every create threw "Failed to fetch" (Scaffald/SaaS#1353). Without a key
+   * the POST is not retried, so a transient 5xx cannot double-create a row.
    */
   async create(params: CreateApplicationParams): Promise<Application> {
-    return this.post<Application>(
-      '/v1/applications',
-      params,
-      generateIdempotencyKey()
-    )
+    return this.post<Application>('/v1/applications', params)
   }
 
   /**

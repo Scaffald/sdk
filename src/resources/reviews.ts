@@ -368,7 +368,11 @@ export class Reviews extends Resource {
    * Get user's own reviews (drafts and submitted)
    */
   async getMyReviews(): Promise<Review[]> {
-    return this.get('/reviews/my-reviews')
+    // The api answers `{ reviews: [...] }`; unwrap it so callers get the array
+    // the signature promises. A bare array is still accepted.
+    const result = await this.get<{ reviews?: Review[] } | Review[]>('/reviews/my-reviews')
+    if (Array.isArray(result)) return result
+    return Array.isArray(result?.reviews) ? result.reviews : []
   }
 
   /**

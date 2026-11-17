@@ -259,6 +259,21 @@ describe('Reviews', () => {
       expect(result).toBeInstanceOf(Array)
     })
 
+    it('unwraps the api\'s { reviews } envelope', async () => {
+      const result = await client.reviews.getMyReviews()
+
+      expect(result).toHaveLength(1)
+      expect(result[0].id).toBe('review_1')
+    })
+
+    it('still accepts a bare array', async () => {
+      server.use(
+        http.get('*/reviews/my-reviews', () => HttpResponse.json([{ id: 'review_9' }]))
+      )
+      const result = await client.reviews.getMyReviews()
+      expect(result.map((r) => r.id)).toEqual(['review_9'])
+    })
+
     it('should include review details', async () => {
       const result = await client.reviews.getMyReviews()
 

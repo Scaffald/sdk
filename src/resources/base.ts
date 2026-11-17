@@ -11,8 +11,8 @@ export abstract class Resource {
     return this.client.get<T>(path, query)
   }
 
-  protected post<T>(path: string, body?: any, idempotencyKey?: string): Promise<T> {
-    return this.client.post<T>(path, body, undefined, idempotencyKey)
+  protected post<T>(path: string, body?: any): Promise<T> {
+    return this.client.post<T>(path, body)
   }
 
   protected put<T>(path: string, body?: any): Promise<T> {

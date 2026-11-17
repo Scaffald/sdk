@@ -1631,20 +1631,23 @@ export const handlers = [
   }),
 
   // GET /reviews/my-reviews - Get my reviews
+  // Mirrors the api: the list is wrapped in `{ reviews }`.
   http.get(`${BASE_URL}/reviews/my-reviews`, () => {
-    return HttpResponse.json([
-      {
-        id: 'review_1',
-        author_user_id: 'user_123',
-        subject_id: 'user_456',
-        subject_type: 'user',
-        rating: 5,
-        body: 'Excellent work',
-        metadata: {},
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      },
-    ])
+    return HttpResponse.json({
+      reviews: [
+        {
+          id: 'review_1',
+          author_user_id: 'user_123',
+          subject_id: 'user_456',
+          subject_type: 'user',
+          rating: 5,
+          body: 'Excellent work',
+          metadata: {},
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+    })
   }),
 
   // GET /reviews/analytics - Get review analytics
