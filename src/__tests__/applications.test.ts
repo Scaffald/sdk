@@ -174,7 +174,13 @@ describe('Applications Resource', () => {
       screening_answers: { years_experience: 5 },
       attachment_metadata: {},
       stage_history: [
-        { from_status: 'new', to_status: 'screen', actor_user_id: null, changed_at: '2026-08-02T00:00:00Z' },
+        {
+          from_status: 'new',
+          to_status: 'screen',
+          actor_user_id: 'user_9',
+          actor_name: 'Dana Reyes',
+          changed_at: '2026-08-02T00:00:00Z',
+        },
         { from_status: 'screen', to_status: 'interview', actor_user_id: null, changed_at: '2026-08-04T00:00:00Z' },
       ],
       candidate: {
@@ -223,6 +229,8 @@ describe('Applications Resource', () => {
       // what made both metrics structurally zero.
       expect(result.data[0].stage_history).toHaveLength(2)
       expect(result.data[0].stage_history[0].to_status).toBe('screen')
+      // The Activity tab names the mover rather than printing their id (#1414).
+      expect(result.data[0].stage_history[0].actor_name).toBe('Dana Reyes')
     })
 
     it('serialises every filter into the query string', async () => {
