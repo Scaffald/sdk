@@ -191,6 +191,7 @@ export type {
   ProfileWizardStepId,
   CompletionMilestoneThreshold,
   SectionStatus,
+  SectionCountProgress,
   CompletionStatusPayload,
   PersonalizedBenefit,
   PersonalizedBenefitsResponse,

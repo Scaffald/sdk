@@ -14,12 +14,20 @@ export type ProfileWizardStepId =
 
 export type CompletionMilestoneThreshold = 25 | 50 | 75 | 100
 
+/** How far a count-based section is toward its threshold, e.g. 1 of 3 skills. */
+export interface SectionCountProgress {
+  current: number
+  required: number
+}
+
 export interface SectionStatus {
   id: ProfileWizardStepId
   title: string
   weight: number
   completed: boolean
   missingFields: string[]
+  /** Set on sections that complete at a count (skills, certifications); `current` is capped at `required`. */
+  progress?: SectionCountProgress
 }
 
 export interface CompletionStatusPayload {
