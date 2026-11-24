@@ -1009,3 +1009,18 @@ export type {
 
 import { Scaffald } from './client.js'
 export default Scaffald
+
+export type {
+  ClaimInviteResult,
+  CreateInvitesParams,
+  CreateInvitesResponse,
+  Invite,
+  InviteContact,
+  InviteFailReason,
+  InviteLink,
+  InvitePreview,
+  InviteResult,
+  InviteSkipReason,
+  InvitesListResponse,
+  InviteListStatus,
+} from './resources/invites.js'

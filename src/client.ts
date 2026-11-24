@@ -36,6 +36,7 @@ import { ONET } from './resources/onet.js'
 import { Portfolio } from './resources/portfolio.js'
 import { Reviews } from './resources/reviews.js'
 import { ReviewLinks } from './resources/review-links.js'
+import { Invites } from './resources/invites.js'
 import { Projects } from './resources/projects.js'
 import { ProfileViews } from './resources/profile-views.js'
 import { UserProfiles } from './resources/user-profiles.js'
@@ -113,6 +114,7 @@ export class Scaffald {
   public readonly portfolio: Portfolio
   public readonly reviews: Reviews
   public readonly reviewLinks: ReviewLinks
+  public readonly invites: Invites
   public readonly projects: Projects
   public readonly profileViews: ProfileViews
   public readonly userProfiles: UserProfiles
@@ -197,6 +199,7 @@ export class Scaffald {
     this.portfolio = new Portfolio(this.http)
     this.reviews = new Reviews(this.http)
     this.reviewLinks = new ReviewLinks(this.http)
+    this.invites = new Invites(this.http)
     this.projects = new Projects(this.http)
     this.profileViews = new ProfileViews(this.http)
     this.userProfiles = new UserProfiles(this.http)
