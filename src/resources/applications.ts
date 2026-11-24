@@ -188,6 +188,11 @@ export interface EmployerApplicationStageChange {
   from_status: string | null
   to_status: string
   actor_user_id: string | null
+  /**
+   * Who made the move: display name, else username. Null when the actor is
+   * unknown or has neither; optional because older api deployments omit it.
+   */
+  actor_name?: string | null
   changed_at: string
 }
 
