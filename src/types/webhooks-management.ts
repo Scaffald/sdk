@@ -53,6 +53,13 @@ export interface Webhook {
   created_at: string
   /** When the webhook was last updated (ISO 8601) */
   updated_at: string
+  /** Delivery statistics, kept on the row by the delivery worker */
+  total_deliveries?: number
+  successful_deliveries?: number
+  failed_deliveries?: number
+  last_delivery_at?: string | null
+  last_success_at?: string | null
+  last_failure_at?: string | null
 }
 
 /**
@@ -113,6 +120,11 @@ export interface WebhookEventTypeInfo {
  * Parameters for creating a webhook
  */
 export interface CreateWebhookParams {
+  /**
+   * The organization the webhook belongs to. Required when the caller belongs
+   * to more than one organization; the api refuses to guess.
+   */
+  organization_id?: string
   /** Webhook URL (must be HTTPS) */
   url: string
   /** Optional description */
@@ -149,6 +161,14 @@ export interface UpdateWebhookParams {
   rate_limit_per_minute?: number
   /** Update metadata */
   metadata?: Record<string, unknown>
+}
+
+/**
+ * Parameters for listing webhook deliveries
+ */
+export interface ListWebhooksParams {
+  /** Only this organization's webhooks. Omit for every organization the caller belongs to. */
+  organization_id?: string
 }
 
 /**

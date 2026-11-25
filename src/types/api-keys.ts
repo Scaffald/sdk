@@ -37,6 +37,8 @@ export type RateLimitTier = 'free' | 'pro' | 'enterprise'
 export interface ApiKey {
   /** Unique identifier */
   id: string
+  /** The organization the key belongs to */
+  organization_id?: string
   /** Human-readable name */
   name: string
   /** Masked key prefix for display (e.g., "sk_test_abc123...") */
@@ -107,6 +109,11 @@ export interface ApiKeyUsageStats {
  * Parameters for creating an API key
  */
 export interface CreateApiKeyParams {
+  /**
+   * The organization the key belongs to. Required when the caller belongs to
+   * more than one organization; the api refuses to guess (Scaffald/SaaS#1037).
+   */
+  organization_id?: string
   /** Human-readable name for the API key */
   name: string
   /** API key environment */
@@ -117,6 +124,14 @@ export interface CreateApiKeyParams {
   expires_at?: string
   /** Rate limit tier */
   rate_limit_tier?: RateLimitTier
+}
+
+/**
+ * Parameters for listing API keys
+ */
+export interface ListApiKeysParams {
+  /** Only this organization's keys. Omit for every organization the caller belongs to. */
+  organization_id?: string
 }
 
 /**
