@@ -4,6 +4,7 @@ import type {
   ApiKeyCreated,
   ApiKeyUsageStats,
   CreateApiKeyParams,
+  ListApiKeysParams,
   UpdateApiKeyParams,
   GetUsageParams,
   RevokeApiKeyResponse,
@@ -33,11 +34,11 @@ export class ApiKeys extends Resource {
    * }
    * ```
    */
-  async list(): Promise<ApiKey[]> {
+  async list(params?: ListApiKeysParams): Promise<ApiKey[]> {
     // The route wraps in `{ data }` (api-keys.ts `GET /`) and the http client
     // returns the body verbatim. Returning the body made `list()` hand callers
     // an object typed as an array, and /office/api-keys crashed on `.map` (#1015).
-    const res = await this.get<{ data: ApiKey[] }>('/v1/api-keys')
+    const res = await this.get<{ data: ApiKey[] }>('/v1/api-keys', params)
     return res.data
   }
 

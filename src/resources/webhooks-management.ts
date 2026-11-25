@@ -3,6 +3,7 @@ import type {
   CreateWebhookParams,
   UpdateWebhookParams,
   ListDeliveriesParams,
+  ListWebhooksParams,
   WebhooksListResponse,
   WebhookResponse,
   WebhookCreatedResponse,
@@ -35,8 +36,8 @@ export class WebhooksManagement extends Resource {
    * }
    * ```
    */
-  async list(): Promise<WebhooksListResponse> {
-    return this.get<WebhooksListResponse>('/v1/webhooks')
+  async list(params?: ListWebhooksParams): Promise<WebhooksListResponse> {
+    return this.get<WebhooksListResponse>('/v1/webhooks', params)
   }
 
   /**
